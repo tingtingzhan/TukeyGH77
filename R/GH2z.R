@@ -68,7 +68,7 @@ GH2z <- function(q, q0 = (q - A)/B, A = 0, B = 1, ...) {
   # bound issue only in [dGH], not [qfmx]
   
   if (!g0 && !h0) { # most likely to happen in ?stats::optim; put in as the first option to save time
-    out[] <- vuniroot2(y = q0 * g, f = function(z) expm1(g*z) * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
+    out[] <- vuniroot2(y = q0 * g, f = \(z) expm1(g*z) * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
     # very small `h` would cause bound-issue
     return(out)
   }
@@ -85,7 +85,7 @@ GH2z <- function(q, q0 = (q - A)/B, A = 0, B = 1, ...) {
   }
   
   if (g0 && !h0) { # wont have the bound issue if g0
-    out[] <- vuniroot2(y = q0, f = function(z) z * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
+    out[] <- vuniroot2(y = q0, f = \(z) z * exp(h * z^2/2), interval = interval, tol = tol, maxiter = maxiter)
     return(out)
   }
   

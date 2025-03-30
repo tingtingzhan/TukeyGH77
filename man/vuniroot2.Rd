@@ -54,7 +54,7 @@ tryCatch(vuniroot(f, lower = 1, upper = 3, extendInt = 'yes'), warning = identit
 tryCatch(vuniroot(f, lower = 1, upper = 3, extendInt = 'downX'), error = identity)
 tryCatch(vuniroot(f, lower = 1, upper = 3, extendInt = 'upX'), warning = identity)
 
-vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
+vuniroot2(c(NA, 1:9), f = \(x) x^2, interval = c(1, 3)) # all good
 
 }
 \keyword{internal}

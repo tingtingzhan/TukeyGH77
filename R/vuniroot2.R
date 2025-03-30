@@ -49,7 +49,7 @@
 #' tryCatch(vuniroot(f, lower = 1, upper = 3, extendInt = 'downX'), error = identity)
 #' tryCatch(vuniroot(f, lower = 1, upper = 3, extendInt = 'upX'), warning = identity)
 #' 
-#' vuniroot2(c(NA, 1:9), f = function(x) x^2, interval = c(1, 3)) # all good
+#' vuniroot2(c(NA, 1:9), f = \(x) x^2, interval = c(1, 3)) # all good
 #' 
 #' @keywords internal
 #' @importFrom rstpm2 vuniroot
@@ -116,7 +116,7 @@ vuniroot2 <- function(
     # in such case R will crash (instead of throw an ?rstpm2::vuniroot error)
     # ?base::tryCatch will not be able to stop R from crashing!
     out[yok][sign_change] <- vuniroot(
-      f = function(x) f(x) - yok_[sign_change],
+      f = \(x) f(x) - yok_[sign_change],
       lower = rep(interval[1L], times = nn), upper = rep(interval[2L], times = nn), 
       f.lower = f.lower[sign_change], f.upper = f.upper[sign_change], 
       extendInt = 'no', check.conv = TRUE,
