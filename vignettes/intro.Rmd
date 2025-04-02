@@ -1,0 +1,110 @@
+---
+title: "intro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents ..
+
+## Note to Users
+
+Examples in this vignette require that the `search` path has
+
+```{r, include = FALSE}
+library(knitr)
+opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(TukeyGH77)
+library(fitdistrplus)
+```
+
+## Terms and Abbreviations
+
+```{r echo = FALSE, results = 'asis'}
+c(
+  '', 'Forward pipe operator', '`?base::pipeOp` introduced in `R` 4.1.0', 
+  '`CRAN`, `R`', 'The Comprehensive R Archive Network', 'https://cran.r-project.org',
+  '`curve`', 'Function plots', '`graphics::curve`',
+  '`mc.cores`', 'Number of CPU cores to use', '`parallel::mclapply`; `parallel::detectCores`',
+  '`object.size`', 'Memory allocation', '`utils::object.size`',
+  '`save`, `xz`', 'Save with `xz` compression', '`base::save(., compress = \'xz\')`; `base::saveRDS(., compress = \'xz\')`; https://en.wikipedia.org/wiki/XZ_Utils', 
+  '`S3`, `generic`, `methods`', '`S3` object oriented system',  '`base::UseMethod`; `utils::methods`; `utils::getS3method`; https://adv-r.hadley.nz/s3.html',
+  '`search`', 'Search path', '`base::search`'
+) |>
+  matrix(nrow = 3L, dimnames = list(c('Term / Abbreviation', 'Description', 'Reference'), NULL)) |>
+  t.default() |>
+  as.data.frame.matrix() |> 
+  kable(format = 'html') 
+# ?knitr::kable
+# default: `|` shown as &...
+# format = 'html': `>` shown as &..
+```
+
+
+# Tukey $g$-and-$h$ Distribution
+
+## Density
+
+```{r}
+curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5, n = 501L, ylab = 'Density')
+```
+
+## Probability
+
+```{r}
+curve(pGH(x, g = .3, h = .1), from = -2.5, to = 3.5, n = 501L, ylab = 'Probability')
+```
+
+## Quantile
+
+```{r}
+curve(qGH(x, g = .3, h = .1), from = 0, to = 1, n = 501L, ylab = 'Quantile')
+```
+
+## Simulation
+
+```{r}
+rGH(n = 1e3L, g = .3, h = .1) |> 
+  hist(xlab = 'TukeyGH(g = .3, h = .1)', main = NULL)
+```
+
+# Letter Value Estimates
+
+```{r}
+set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
+```
+
+```{r}
+letterValue(x, g_ = FALSE, h_ = FALSE)
+```
+
+```{r}
+letterValue(x, g_ = FALSE)
+```
+
+```{r}
+letterValue(x, h_ = FALSE)
+```
+
+```{r}
+(m3 = letterValue(x))
+```
+
+```{r}
+(fit = fitdist(x, distr = 'GH', start = as.list.default(m3)))
+```
+
+```{r fig.height=7, fig.width=7}
+plot(fit) # fitdistrplus:::plot.fitdist
+```
+

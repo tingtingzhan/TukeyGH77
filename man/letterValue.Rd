@@ -57,19 +57,8 @@ thus extends \code{fitdistrplus::fitdist} for estimating Tukey \eqn{g}-&-\eqn{h}
 \note{
 Parameter \code{g_} and \code{h_} does not have to be truly unique; i.e., \link[base]{all.equal} elements are allowed.
 }
-\examples{
-set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
-letterValue(x, g_ = FALSE, h_ = FALSE)
-letterValue(x, g_ = FALSE)
-letterValue(x, h_ = FALSE)
-(m3 = letterValue(x))
-
-library(fitdistrplus)
-fit = fitdist(x, distr = 'GH', start = as.list.default(m3))
-plot(fit) # fitdistrplus:::plot.fitdist
-
-}
 \references{
 Hoaglin, D.C. (1985). Summarizing Shape Numerically: The \eqn{g}-and-\eqn{h} Distributions.
 \doi{10.1002/9781118150702.ch11}
 }
+\keyword{internal}

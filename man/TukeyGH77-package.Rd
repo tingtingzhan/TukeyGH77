@@ -4,34 +4,22 @@
 \name{TukeyGH77-package}
 \alias{TukeyGH77}
 \alias{TukeyGH77-package}
-\title{Tukey \eqn{g}-&-\eqn{h} Distribution}
-\value{
-Returned values of individual functions are documented separately.
-}
+\title{TukeyGH77: Tukey g-&-h Distribution}
 \description{
-Density, cumulative density, quantile and simulation of
-the 4-parameter Tukey (1977) \eqn{g}-&-\eqn{h} distributions.
-The quantile-based transformation (Hoaglin 1985)
-and its reverse transformation,
-as well as the letter-value based estimates (Hoaglin 1985),
-are also provided.
+Density, cumulative density, quantile and simulation of the 4-parameter Tukey g-and-h (1977) distributions. The quantile-based transformation (Hoaglin 1985 \doi{10.1002/9781118150702.ch11}) and its reverse transformation, as well as the letter-value based estimates (Hoaglin 1985).
 }
-\references{
-Tukey, J.W. (1977): Modern Techniques in Data Analysis.
-In: NSF-sponsored Regional Research Conference at Southeastern Massachusetts University,
-North Dartmouth, MA.
+\note{
+Help files of individual functions are intentionally suppressed in the \code{pdf} manual.
+Users are encouraged to get started with
 
-Hoaglin, D.C. (1985): Summarizing shape numerically: The \eqn{g}-and-\eqn{h} distributions.
-Exploring data tables, trends, and shapes, pp. 461–513.
-John Wiley & Sons, Ltd, New York.
-\doi{10.1002/9781118150702.ch11}
+\code{vignette('intro', package = 'TukeyGH77')}
 }
 \author{
-\strong{Maintainer}: Tingting Zhan \email{tingtingzhan@gmail.com}
+\strong{Maintainer}: Tingting Zhan \email{tingtingzhan@gmail.com} (\href{https://orcid.org/0000-0001-9971-4844}{ORCID})
 
 Other contributors:
 \itemize{
-  \item Inna Chervoneva \email{Inna.Chervoneva@jefferson.edu} [contributor]
+  \item Inna Chervoneva \email{Inna.Chervoneva@jefferson.edu} (\href{https://orcid.org/0000-0002-9104-4505}{ORCID}) [contributor]
 }
 
 }

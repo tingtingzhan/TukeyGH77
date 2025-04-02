@@ -54,17 +54,7 @@
 #' Hoaglin, D.C. (1985). Summarizing Shape Numerically: The \eqn{g}-and-\eqn{h} Distributions. 
 #' \doi{10.1002/9781118150702.ch11}
 #' 
-#' @examples 
-#' set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
-#' letterValue(x, g_ = FALSE, h_ = FALSE)
-#' letterValue(x, g_ = FALSE)
-#' letterValue(x, h_ = FALSE)
-#' (m3 = letterValue(x))
-#' 
-#' library(fitdistrplus)
-#' fit = fitdist(x, distr = 'GH', start = as.list.default(m3))
-#' plot(fit) # fitdistrplus:::plot.fitdist
-#' 
+#' @keywords internal
 #' @name letterValue
 #' @importFrom stats mad median.default quantile
 #' @export

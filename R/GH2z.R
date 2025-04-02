@@ -30,7 +30,6 @@
 #' all.equal.numeric(.GH2z(z2GH(z, g = .3, h = .1), g = .3, h = .1), z)
 #' all.equal.numeric(.GH2z(z2GH(z, g = 0, h = .1), g = 0, h = .1), z)
 #' all.equal.numeric(.GH2z(z2GH(z, g = .2, h = 0), g = .2, h = 0), z)
-#' 
 #' @keywords internal
 #' @export
 GH2z <- function(q, q0 = (q - A)/B, A = 0, B = 1, ...) {

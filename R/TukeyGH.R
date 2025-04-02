@@ -53,22 +53,7 @@
 #' 
 #' Function [rGH()] generates random deviates, only taking scalar arguments.
 #' 
-#' @examples
-#' (x = c(NA_real_, rGH(n = 5L, g = .3, h = .1)))
-#' dGH(x, g = c(0,.1,.2), h = c(.1,.1,.1))
-#' 
-#' p0 = seq.int(0, 1, by = .2)
-#' (q0 = qGH(p0, g = .2, h = .1))
-#' range(pGH(q0, g = .2, h = .1) - p0)
-#'
-#' q = (-2):3; q[2L] = NA_real_; q
-#' (p1 = pGH(q, g = .3, h = .1))
-#' range(qGH(p1, g = .3, h = .1) - q, na.rm = TRUE)
-#' (p2 = pGH(q, g = .2, h = 0))
-#' range(qGH(p2, g = .2, h = 0) - q, na.rm = TRUE)
-#' 
-#' curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5)
-#' 
+#' @keywords internal
 #' @name TukeyGH
 #' @export
 dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
@@ -82,7 +67,9 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
 #' @importFrom stats rnorm
 #' @export
 rGH <- function(n, A = 0, B = 1, g = 0, h = 0) {
-  z2GH(rnorm(n), A = A, B = B, g = g, h = h)
+  n |>
+    rnorm() |> 
+    z2GH(A = A, B = B, g = g, h = h)
 }
 
 
