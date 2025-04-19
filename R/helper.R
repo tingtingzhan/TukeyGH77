@@ -23,9 +23,17 @@
 #' @keywords internal
 #' @name TukeyGH_helper
 #' @export
-.dGH <- function(x, A, B, g, h, log, interval = c(-50, 50), tol = .Machine$double.eps^.25, maxiter = 1000) {
+.dGH <- function(
+    x, 
+    A, B, g, h, 
+    log, 
+    interval = c(-50, 50), 
+    tol = .Machine$double.eps^.25, 
+    maxiter = 1000
+) {
   # not compute intensive
   # use wider `interval` since not compute intensive
+  
   if (!(nx <- length(x))) return(double(length = 0L)) # ?fitdistrplus::fitdist will test len-0 `x`
   nA <- length(A)
   nB <- length(B)
@@ -35,6 +43,7 @@
   xok <- is.finite(x) # ?fitdistrplus::fitdist will test exceptions of x = c(0, 1, Inf, NaN, -1)
   
   if ((nA == 1L) && (nB == 1L) && (ng == 1L) && (nh == 1L)) {
+    
     z <- x
     if ((h < 0) || (B < 0)) { # exception handling for ?fitdistrplus::fitdist
       z[] <- NaN
@@ -43,6 +52,7 @@
     z[xok] <- .GH2z(q = c(x[xok]), A = A, B = B, g = g, h = h, interval = interval, tol = tol, maxiter = maxiter)
     
   } else if ((nA == nB) && (nA == ng) && (nA == nh)) {
+    
     #if (!all(xok)) stop('my fmx algorithm do not allow NA or Inf quantile')
     if (is.matrix(x)) {
       if (dim(x)[1L] != nA) stop('nrow of `x` do not match length of `A`')
@@ -72,7 +82,7 @@
 
 
 
-# Derivative of [z2GH] against `z`, on the log-scale
+# Derivative of [z2GH()] against `z`, on the log-scale
 # inspired by ?OpVaR:::deriv_gh
 # Inf in `z` *will* cause trouble
 # not sure of the usage of ?base::tanh and ?base::cosh in ?gk:::Qgh_deriv

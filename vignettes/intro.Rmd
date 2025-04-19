@@ -7,14 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Introduction
-
-This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents ..
-
-## Note to Users
-
-Examples in this vignette require that the `search` path has
-
 ```{r, include = FALSE}
 library(knitr)
 opts_chunk$set(
@@ -22,6 +14,15 @@ opts_chunk$set(
   comment = "#>"
 )
 ```
+
+
+# Introduction
+
+This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents ..
+
+## Note to Users
+
+Examples in this vignette require that the `search` path has
 
 ```{r setup}
 library(TukeyGH77)
