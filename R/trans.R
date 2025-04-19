@@ -17,9 +17,9 @@
 #' @param g,h \link[base]{double} scalars
 #' 
 #' @param interval \link[base]{numeric} \link[base]{length}-`2L` \link[base]{vector} for function [gh2z()],
-#' domain of standard normal quantile \eqn{z} to search.
-#' Note that `qnorm(.Machine$double.eps)` is approximately `-8.13`.
-#' See more from function [vuniroot2()]
+#' domain of standard normal quantile \eqn{z} to search,
+#' default `c(-8.3, 8.3)` as `stopifnot(identical(pnorm(8.3), 1))`.
+#' See more from function [vuniroot2()].
 #' 
 #' @param ... other parameters of function [vuniroot2()]
 #' 
@@ -50,7 +50,7 @@ z2gh <- function(z, g = 0, h = 0) {
 gh2z <- function(
     q,
     g = 0, h = 0,
-    interval = c(-8, 8),
+    interval = c(-8.3, 8.3),
     ...
 ) {
   
@@ -65,8 +65,7 @@ gh2z <- function(
   if (!g0 && h0) { # has bound but also has explicit form!
     egz <- q[qok]*g + 1
     if (any(id <- (egz <= 0))) {
-      #out[qok][id] <- if (g < 0) Inf else -Inf
-      out[qok][id] <- if (g < 0) interval[2L] else interval[1L]
+      out[qok][id] <- if (g > 0) interval[1L] else interval[2L]
     }
     out[qok][!id] <- log(egz[!id]) / g
     return(out)

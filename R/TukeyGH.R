@@ -65,7 +65,7 @@ dGH <- function(x, A = 0, B = 1, g = 0, h = 0, log = FALSE, ...) {
     gh2z(g = g, h = h, ...)
 
   l <- -z^2/2 - log(2*pi)/2 - log(B) - d_z2GH(z, g = g, h = h)
-  if (log) return(l)
+  if (log) return(l) 
   return(exp(l))
   
 }

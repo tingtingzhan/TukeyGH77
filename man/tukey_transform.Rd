@@ -8,7 +8,7 @@
 \usage{
 z2gh(z, g = 0, h = 0)
 
-gh2z(q, g = 0, h = 0, interval = c(-8, 8), ...)
+gh2z(q, g = 0, h = 0, interval = c(-8.3, 8.3), ...)
 }
 \arguments{
 \item{z}{\link[base]{double} scalar or \link[base]{vector}, standard normal quantiles \eqn{z_q}}
@@ -19,9 +19,9 @@ gh2z(q, g = 0, h = 0, interval = c(-8, 8), ...)
 with location parameter \eqn{A=0} and scale parameter \eqn{B=1}}
 
 \item{interval}{\link[base]{numeric} \link[base]{length}-\code{2L} \link[base]{vector} for function \code{\link[=gh2z]{gh2z()}},
-domain of standard normal quantile \eqn{z} to search.
-Note that \code{qnorm(.Machine$double.eps)} is approximately \code{-8.13}.
-See more from function \code{\link[=vuniroot2]{vuniroot2()}}}
+domain of standard normal quantile \eqn{z} to search,
+default \code{c(-8.3, 8.3)} as \code{stopifnot(identical(pnorm(8.3), 1))}.
+See more from function \code{\link[=vuniroot2]{vuniroot2()}}.}
 
 \item{...}{other parameters of function \code{\link[=vuniroot2]{vuniroot2()}}}
 }
