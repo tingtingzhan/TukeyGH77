@@ -146,13 +146,13 @@ curve(pGH(x, g = .3, h = .1), from = -2.5, to = 3.5, n = 501L, ylab = 'Probabili
 
 ## Density
 
-Density function $f_{gh}$ has a closed analytical form in terms of $\zeta_{gh}$, 
+Density function $f_{gh}$ has a closed analytical form in terms of $\zeta_{gh}$,
 
 $$
 f_{gh}(t) = \dfrac{e^{-z^2/2}}{\sqrt{2\pi}\cdot\partial t_{gh}/\partial z}\Bigg|_{z=\zeta_{gh}(t)}
-$$ 
+$$
 
-where 
+where
 
 $$
 \dfrac{\partial t_{gh}}{\partial z}=
