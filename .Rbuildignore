@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 Icon\\?
 vignettes/rsconnect
+vignettes/.*_files
+vignettes/.*.html

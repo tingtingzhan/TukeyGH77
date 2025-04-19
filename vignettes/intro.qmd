@@ -1,0 +1,219 @@
+---
+title: "Tukey"
+author: Tingting Zhan
+format: 
+  html:
+    page-layout: full
+    html-math-method: katex
+toc: true
+toc-location: left
+toc-depth: 4
+toc-title: ''
+editor: visual
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents ..
+
+## Note to Users
+
+Examples in this vignette require that the `search` path has
+
+```{r}
+library(TukeyGH77)
+library(fitdistrplus)
+```
+
+```{r}
+#| echo: false
+library(knitr) # for tables in this vignette
+op = par(no.readonly = TRUE)
+#options(mc.cores = 1L) # for CRAN submission
+```
+
+## Terms and Abbreviations
+
+```{r}
+#| echo: false
+#| results: asis
+c(
+  '', 'Forward [pipe operator](https://search.r-project.org/R/refmans/base/html/pipeOp.html) introduced in `R` 4.1.0', 
+  '[`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html)', 'Test of near equality',
+  '`CRAN`, `R`', '[The Comprehensive R Archive Network](https://cran.r-project.org)',
+  '[`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html)', 'Function plots',
+  '[`mc.cores`](https://search.r-project.org/R/refmans/parallel/html/mclapply.html)', 'Number of CPU cores to use',
+  '[`object.size`](https://search.r-project.org/R/refmans/utils/html/object.size.html)', 'Memory allocation',
+  '[`save`](https://search.r-project.org/R/refmans/base/html/save.html), [`saveRDS`](https://search.r-project.org/R/refmans/base/html/readRDS.html), `xz`', 'Save with [`xz`](https://en.wikipedia.org/wiki/XZ_Utils) compression', 
+  '`S3`, `generic`, [`methods`](https://search.r-project.org/R/refmans/utils/html/methods.html)', '`S3` object oriented system, [`UseMethod`](https://search.r-project.org/R/refmans/base/html/UseMethod.html); [`getS3method`](https://search.r-project.org/R/refmans/utils/html/getS3method.html); <https://adv-r.hadley.nz/s3.html>',
+  '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path'
+) |>
+  matrix(nrow = 2L, dimnames = list(c('Term / Abbreviation', 'Description'), NULL)) |>
+  t.default() |>
+  as.data.frame.matrix() |> 
+  kable() 
+```
+
+# Tukey's $g$-&-$h$ Transformation
+
+## Tukey's Transformation
+
+Tukey's $g$-&-$h$ random variable $t_{gh}$ \citep{Tukey77} is a monotone transformation of the standard normal variable $z$ \cite{Hoaglin85}, $$
+t_{gh} =
+\begin{cases}
+z\cdot G_g(z) & g\neq 0,\ g\text{-distribution} \\
+z\cdot H_h(z) & h>0,\ h\text{-distribution} \\
+z\cdot G_g(z)\cdot H_h(z) & g\neq 0,h>0,\ gh\text{-distribution} \\
+\end{cases}
+$$ with skewness
+
+$$
+G_g(z)=
+\begin{cases}
+(e^{gz}-1)/gz & g\neq 0\\\
+\displaystyle\lim_{g\rightarrow 0} G_{g \ne 0}(z)=1 & g=0
+\end{cases}
+$$ and kurtosis
+
+$$
+H_h(z)=
+\begin{cases}
+e^{hz^2/2} & h>0\\
+1 & h =0
+\end{cases}
+$$ Tukey's transformation function `z2gh()` transforms the standard normal variable $z$ to Tukey's $g$-&-$h$ random variable $t_{gh}$.
+
+```{r}
+set.seed(15); rnorm(1e3L) |>
+  z2gh(g = .5, h = .1) |>
+  hist(breaks = 30L, xlab = NULL, main = c('Tukey(g=.5, h=.1)'))
+```
+
+## Inverse Tukey's Transformation
+
+Inverse Tukey's transformation $\zeta_{gh}$
+
+$$
+\zeta_{gh}(t) =
+\begin{cases}
+g^{-1}\ln(gt+1), & g\neq0 \\
+z:\ z\cdot H_h(z) = t, & h>0 \\
+z:\ z\cdot G_g(z)\cdot H_h(z) = t, & g\neq 0,\ h>0 
+\end{cases}
+$$ does not have a closed analytical form when $h>0$, but the numerical solution could be found by using a root-finding algorithm \citep{Brent71}.
+
+Inverse Tukey's transformation function `gh2z()` transforms the Tukey's $g$-&-$h$ random variable $t_{gh}$ to standard normal variable $z$. A closed analytical form of $\zeta_{gh}$ exists when $h=0$, thus the discrepancy is merely a floating-point error.
+
+```{r}
+set.seed(24); x = rnorm(1e3L)
+x |> 
+  z2gh(g = .3, h = 0) |> 
+  gh2z(g = .3, h = 0) |> 
+  all.equal.numeric(target = x, tolerance = .Machine$double.eps)
+```
+
+We have to rely on a root-finding algorithm, which has much larger discrepancy, when $h>0$.
+
+```{r}
+set.seed(91); x = rnorm(1e3L)
+x |> 
+  z2gh(g = 0, h = .1) |> 
+  gh2z(g = 0, h = .1) |> 
+  all.equal.numeric(target = x, tolerance = .Machine$double.eps)
+```
+
+```{r}
+set.seed(56); x = rnorm(1e3L)
+x |> 
+  z2gh(g = .3, h = .1) |> 
+  gh2z(g = .3, h = .1) |> 
+  all.equal.numeric(target = x, tolerance = .Machine$double.eps)
+```
+
+# Tukey $g$-and-$h$ Distribution
+
+## Probability
+
+The distribution function is $F_{gh}(t)=\text{Pr}(T_{gh} \le t)=\text{Pr}\left(Z \le \zeta_{gh}(t)\right)$.
+
+```{r}
+curve(pGH(x, g = .3, h = .1), from = -2.5, to = 3.5, n = 501L, ylab = 'Probability')
+```
+
+## Density
+
+Density function $f_{gh}$ has a closed analytical form in terms of $\zeta_{gh}$, 
+
+$$
+f_{gh}(t) = \dfrac{e^{-z^2/2}}{\sqrt{2\pi}\cdot\partial t_{gh}/\partial z}\Bigg|_{z=\zeta_{gh}(t)}
+$$ 
+
+where 
+
+$$
+\dfrac{\partial t_{gh}}{\partial z}=
+\begin{cases}
+e^{gz}, & g\neq0\\
+e^{hz^2/2}(1+hz^2), & h>0 \\
+e^{hz^2/2}\left(e^{gz}+g^{-1}hz(e^{gz}-1)\right), & g\neq 0,\ h>0 
+\end{cases}
+$$
+
+Note that when $h=0$, domain has a bound.
+
+```{r}
+curve(dGH(x, g = 1, h = 0), from = -1.2, to = 3.5, n = 501L, ylab = 'Density')
+```
+
+When $h>0$, domain is $(-\infty, \infty)$.
+
+```{r}
+curve(dGH(x, g = .3, h = .1), from = -2.5, to = 3.5, n = 501L, ylab = 'Density')
+```
+
+## Quantile
+
+```{r}
+curve(qGH(x, g = .3, h = .1), from = 0, to = 1, n = 501L, ylab = 'Quantile')
+```
+
+## Simulation
+
+```{r}
+rGH(n = 1e3L, g = .3, h = .1) |> 
+  hist(xlab = 'TukeyGH(g = .3, h = .1)', main = NULL)
+```
+
+# Letter Value Estimates
+
+```{r}
+set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
+```
+
+```{r}
+letterValue(x, g_ = FALSE, h_ = FALSE)
+```
+
+```{r}
+letterValue(x, g_ = FALSE)
+```
+
+```{r}
+letterValue(x, h_ = FALSE)
+```
+
+```{r}
+(m3 = letterValue(x))
+```
+
+```{r}
+(fit = fitdist(x, distr = 'GH', start = as.list.default(m3)))
+```
+
+```{r fig.height=7, fig.width=7}
+plot(fit) # fitdistrplus:::plot.fitdist
+```
