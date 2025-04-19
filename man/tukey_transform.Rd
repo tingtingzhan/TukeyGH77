@@ -8,7 +8,7 @@
 \usage{
 z2gh(z, g = 0, h = 0)
 
-gh2z(q, g = 0, h = 0, interval = c(-8.3, 8.3), ...)
+gh2z(q, g = 0, h = 0, ...)
 }
 \arguments{
 \item{z}{\link[base]{double} scalar or \link[base]{vector}, standard normal quantiles \eqn{z_q}}
@@ -18,27 +18,19 @@ gh2z(q, g = 0, h = 0, interval = c(-8.3, 8.3), ...)
 \item{q}{\link[base]{double} \link[base]{vector}, Tukey \eqn{g}-&-\eqn{h} quantiles \eqn{q}
 with location parameter \eqn{A=0} and scale parameter \eqn{B=1}}
 
-\item{interval}{\link[base]{numeric} \link[base]{length}-\code{2L} \link[base]{vector} for function \code{\link[=gh2z]{gh2z()}},
-domain of standard normal quantile \eqn{z} to search,
-default \code{c(-8.3, 8.3)} as \code{stopifnot(identical(pnorm(8.3), 1))}.
-See more from function \code{\link[=vuniroot2]{vuniroot2()}}.}
-
-\item{...}{other parameters of function \code{\link[=vuniroot2]{vuniroot2()}}}
+\item{...}{parameters of function \code{\link[=vuniroot2]{vuniroot2()}}, other than \code{interval}}
 }
 \value{
 Functions \code{\link[=z2gh]{z2gh()}} and \code{\link[=gh2z]{gh2z()}} both return
 \link[base]{double} scalar, \link[base]{vector} or \link[base]{matrix}.
 }
 \description{
-To transform
-standard normal quantiles \eqn{z_q}
-to
-Tukey \eqn{g}-&-\eqn{h} quantiles,
-or vise versa.
-}
-\details{
 Function \code{\link[=z2gh]{z2gh()}} (not compute intensive) transforms standard normal quantiles \eqn{z_q} to Tukey \eqn{g}-&-\eqn{h} quantiles.
 
 Function \code{\link[=gh2z]{gh2z()}} (compute intensive!!) transforms Tukey \eqn{g}-&-\eqn{h} quantiles to standard normal quantiles \eqn{z_q}.
+}
+\details{
+Domain of standard normal quantile \eqn{z} to search for function \code{\link[=gh2z]{gh2z()}} is hard coded as
+\eqn{(-8.3, 8.3)}, because \code{stopifnot(identical(pnorm(8.3), 1))}.
 }
 \keyword{internal}
