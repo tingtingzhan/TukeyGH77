@@ -116,7 +116,13 @@ x |>
   all.equal.numeric(target = x, tolerance = .Machine$double.eps)
 ```
 
-We have to rely on a root-finding algorithm, which has much larger discrepancy, when $h>0$.
+We have to rely on a root-finding algorithm when $h>0$. To find a numerical solution for standard normal quantile $z$, we need only to search the interval of $(-8.3, 8.3)$, as
+
+```{r}
+stopifnot(identical(pnorm(8.3), 1))
+```
+
+Nontheless, the root-finding algorithm would have much larger discrepancy.
 
 ```{r}
 set.seed(91); x = rnorm(1e3L)

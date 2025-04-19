@@ -51,7 +51,7 @@ gh2z <- function(q, g = 0, h = 0, ...) {
   qok <- is.finite(q)
   
   int <- c(-8.3, 8.3)
-  # identical(pnorm(8.3), 1) |> stopifnot() # 8.29 does not work!
+  # identical(pnorm(8.3), 1) |> stopifnot() # even 8.29 does not work!
   
   if (!g0 && h0) { # has bound but also has explicit form!
     egz <- q[qok]*g + 1
