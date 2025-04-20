@@ -7,7 +7,7 @@
 d_z2GH(z, g, h)
 }
 \arguments{
-\item{z}{\link[base]{double} \link[base]{vector}}
+\item{z}{\link[base]{double} \link[base]{vector}, missingness allowed}
 
 \item{g, h}{\link[base]{double} scalars}
 }

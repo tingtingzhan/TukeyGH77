@@ -11,14 +11,16 @@ z2gh(z, g = 0, h = 0)
 gh2z(q, g = 0, h = 0, ...)
 }
 \arguments{
-\item{z}{\link[base]{double} scalar or \link[base]{vector}, standard normal quantiles \eqn{z_q}}
+\item{z}{\link[base]{double} scalar or \link[base]{vector}, standard normal quantiles \eqn{z_q},
+missingness is \emph{\strong{not}} allowed}
 
 \item{g, h}{\link[base]{double} scalars}
 
-\item{q}{\link[base]{double} \link[base]{vector}, Tukey \eqn{g}-&-\eqn{h} quantiles \eqn{q}
-with location parameter \eqn{A=0} and scale parameter \eqn{B=1}}
+\item{q}{\link[base]{double} \link[base]{vector}, Tukey \eqn{g}-&-\eqn{h} quantiles \eqn{q},
+with location parameter \eqn{A=0} and scale parameter \eqn{B=1},
+missingness is \emph{\strong{not}} allowed}
 
-\item{...}{parameters of function \code{\link[=vuniroot2]{vuniroot2()}}, other than \code{interval}}
+\item{...}{parameters of function \link[rstpm2]{vuniroot}, other than \code{interval}, \code{lower} and \code{upper}}
 }
 \value{
 Functions \code{\link[=z2gh]{z2gh()}} and \code{\link[=gh2z]{gh2z()}} both return

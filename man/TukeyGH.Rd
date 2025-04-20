@@ -17,7 +17,8 @@ qGH(p, A = 0, B = 1, g = 0, h = 0, lower.tail = TRUE, log.p = FALSE)
 pGH(q, A = 0, B = 1, g = 0, h = 0, lower.tail = TRUE, log.p = FALSE, ...)
 }
 \arguments{
-\item{x, q}{\link[base]{double} \link[base]{vector}, quantiles}
+\item{x}{\link[base]{double} \link[base]{vector}, quantiles \eqn{x},
+missingness is allowed for function \code{fitdistrplus::fitdist()}}
 
 \item{A}{\link[base]{double} scalar, location parameter \eqn{A}, default \eqn{A=0},}
 
@@ -33,9 +34,13 @@ pGH(q, A = 0, B = 1, g = 0, h = 0, lower.tail = TRUE, log.p = FALSE, ...)
 
 \item{n}{\link[base]{integer} scalar, number of observations}
 
-\item{p}{\link[base]{double} \link[base]{vector}, probabilities}
+\item{p}{\link[base]{double} \link[base]{vector}, probabilities \eqn{p},
+missingness is \emph{\strong{not}} allowed}
 
 \item{lower.tail}{\link[base]{logical} scalar, if \code{TRUE} (default), probabilities are \eqn{Pr(X\le x)} otherwise, \eqn{Pr(X>x)}.}
+
+\item{q}{\link[base]{double} \link[base]{vector}, quantiles \eqn{q},
+missingness is \emph{\strong{not}} allowed}
 }
 \value{
 Density function \code{\link[=dGH]{dGH()}} returns \link[base]{double} \link[base]{vector}.

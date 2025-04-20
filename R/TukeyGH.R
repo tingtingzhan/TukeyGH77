@@ -15,9 +15,14 @@
 #' skewness \eqn{g} and 
 #' elongation \eqn{h}.
 #' 
-#' @param x,q \link[base]{double} \link[base]{vector}, quantiles
+#' @param x \link[base]{double} \link[base]{vector}, quantiles \eqn{x},
+#' missingness is allowed for function `fitdistrplus::fitdist()`
 #' 
-#' @param p \link[base]{double} \link[base]{vector}, probabilities
+#' @param q \link[base]{double} \link[base]{vector}, quantiles \eqn{q}, 
+#' missingness is ***not*** allowed
+#' 
+#' @param p \link[base]{double} \link[base]{vector}, probabilities \eqn{p},
+#' missingness is ***not*** allowed
 #' 
 #' @param n \link[base]{integer} scalar, number of observations
 #' 

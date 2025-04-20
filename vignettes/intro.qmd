@@ -122,7 +122,7 @@ We have to rely on a root-finding algorithm when $h>0$. To find a numerical solu
 stopifnot(identical(pnorm(8.3), 1))
 ```
 
-Nontheless, the root-finding algorithm would have much larger discrepancy.
+Nonetheless, the root-finding algorithm would have much larger discrepancy (which can be controlled by parameter `tol` inside function `gh2z()`).
 
 ```{r}
 set.seed(91); x = rnorm(1e3L)

@@ -1,7 +1,7 @@
 
 #' @title Derivative of [z2gh()] against `z`, on the log-scale
 #' 
-#' @param z \link[base]{double} \link[base]{vector}
+#' @param z \link[base]{double} \link[base]{vector}, missingness allowed
 #' 
 #' @param g,h \link[base]{double} scalars
 #' 
