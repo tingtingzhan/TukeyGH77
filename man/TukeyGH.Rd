@@ -52,7 +52,7 @@ Quantile function \code{\link[=qGH]{qGH()}} returns \link[base]{double} \link[ba
 Random generator function \code{\link[=rGH]{rGH()}} returns \link[base]{double} \link[base]{vector}.
 }
 \description{
-Density, distribution function, quantile function and simulation
+Density, distribution, quantile and simulation
 for Tukey \eqn{g}-&-\eqn{h} distribution with
 location parameter \eqn{A},
 scale parameter \eqn{B},

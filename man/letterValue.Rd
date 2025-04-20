@@ -6,14 +6,14 @@
 \usage{
 letterValue(
   x,
-  g_ = seq.int(from = 0.15, to = 0.25, by = 0.005),
-  h_ = seq.int(from = 0.15, to = 0.35, by = 0.005),
-  halfSpread = c("both", "lower", "upper"),
+  g_ = seq.int(from = 0.1, to = 0.3, by = 0.005),
+  h_ = seq.int(from = 0.1, to = 0.3, by = 0.005),
   ...
 )
 }
 \arguments{
-\item{x}{\link[base]{double} \link[base]{vector}, one-dimensional observations}
+\item{x}{\link[base]{double} \link[base]{vector}, observations \eqn{x},
+missingness \emph{\strong{not}} allowed.}
 
 \item{g_}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{g} parameter.
 Or, use \code{g_ = FALSE} to implement the constraint \eqn{g=0}
@@ -22,10 +22,6 @@ Or, use \code{g_ = FALSE} to implement the constraint \eqn{g=0}
 \item{h_}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{h} parameter.
 Or, use \code{h_ = FALSE} to implement the constraint \eqn{h=0}
 (i.e., a \eqn{g}-distribution is estimated).}
-
-\item{halfSpread}{\link[base]{character} scalar,
-either to use \code{'both'} for half-spreads (default),
-\code{'lower'} for half-spread, or \code{'upper'} for half-spread.}
 
 \item{...}{additional parameters, currently not in use}
 }
@@ -40,16 +36,18 @@ Tukey \eqn{g}-, \eqn{h}- and \eqn{g}-&-\eqn{h} distribution.
 All equation numbers mentioned below refer to Hoaglin (1985).
 }
 \details{
-Unexported function \code{letterV_g()} estimates parameter \eqn{g} using equation (10) for \eqn{g}-distribution
+Unexported function \code{lv_g_()} estimates parameter \eqn{g} using equation (10) for \eqn{g}-distribution
 and the equivalent equation (31) for \eqn{g}-&-\eqn{h} distribution.
 
-Unexported function \code{letterV_B()} estimates parameter \eqn{B} for Tukey \eqn{g}-distribution
+Unexported function \code{lv_B_()} estimates parameter \eqn{B} for Tukey \eqn{g}-distribution
 (i.e., \eqn{g\neq 0}, \eqn{h=0}), using equation (8a) and (8b).
 
-Unexported function \code{letterV_Bh_g()} estimates parameters \eqn{B} and \eqn{h} when \eqn{g\neq 0}, using equation (33).
+Unexported function \code{lv_Bh_()} estimates parameters \eqn{B} and \eqn{h}
+with given \eqn{g\neq 0}, using equation (33),
+or with given \eqn{g=0}, using equation (26a), (26b) and (27).
 
 Unexported function \code{letterV_Bh()} estimates parameters \eqn{B} and \eqn{h} for Tukey \eqn{h}-distribution,
-i.e., when \eqn{g=0} and \eqn{h\neq 0}, using equation (26a), (26b) and (27).
+i.e., with given \eqn{g=0}, using equation (26a), (26b) and (27).
 
 Function \code{\link[=letterValue]{letterValue()}} plays a similar role as \code{fitdistrplus:::start.arg.default},
 thus extends \code{fitdistrplus::fitdist} for estimating Tukey \eqn{g}-&-\eqn{h} distributions.

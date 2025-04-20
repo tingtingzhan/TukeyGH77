@@ -1,14 +1,11 @@
 
 
-# Package OpVaR \url{https://cran.r-project.org/package=OpVaR} has been removed from CRAN.
-
-
 
 #' @title Tukey \eqn{g}-&-\eqn{h} Distribution
 #' 
 #' @description 
 #' 
-#' Density, distribution function, quantile function and simulation 
+#' Density, distribution, quantile and simulation 
 #' for Tukey \eqn{g}-&-\eqn{h} distribution with 
 #' location parameter \eqn{A},
 #' scale parameter \eqn{B},

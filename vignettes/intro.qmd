@@ -26,7 +26,6 @@ Examples in this vignette require that the `search` path has
 
 ```{r}
 library(TukeyGH77)
-library(fitdistrplus)
 ```
 
 ```{r}
@@ -46,10 +45,8 @@ c(
   '[`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html)', 'Test of near equality',
   '`CRAN`, `R`', '[The Comprehensive R Archive Network](https://cran.r-project.org)',
   '[`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html)', 'Function plots',
-  '[`mc.cores`](https://search.r-project.org/R/refmans/parallel/html/mclapply.html)', 'Number of CPU cores to use',
-  '[`object.size`](https://search.r-project.org/R/refmans/utils/html/object.size.html)', 'Memory allocation',
-  '[`save`](https://search.r-project.org/R/refmans/base/html/save.html), [`saveRDS`](https://search.r-project.org/R/refmans/base/html/readRDS.html), `xz`', 'Save with [`xz`](https://en.wikipedia.org/wiki/XZ_Utils) compression', 
-  '`S3`, `generic`, [`methods`](https://search.r-project.org/R/refmans/utils/html/methods.html)', '`S3` object oriented system, [`UseMethod`](https://search.r-project.org/R/refmans/base/html/UseMethod.html); [`getS3method`](https://search.r-project.org/R/refmans/utils/html/getS3method.html); <https://adv-r.hadley.nz/s3.html>',
+  '[`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html)', 'Median Absolute Deviation',
+  '[`median`](https://search.r-project.org/R/refmans/stats/html/median.html)', 'Median',
   '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path'
 ) |>
   matrix(nrow = 2L, dimnames = list(c('Term / Abbreviation', 'Description'), NULL)) |>
@@ -194,32 +191,121 @@ rGH(n = 1e3L, g = .3, h = .1) |>
   hist(xlab = 'TukeyGH(g = .3, h = .1)', main = NULL)
 ```
 
-# Letter Value Estimates
+# Letter-Value Based Estimates (@Hoaglin85)
+
+Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. The location parameter estimate $\hat{A}$ is simply the sample `median`, thus we subtract the sample median from the original sample, and focus on the estimation of $(B, g, h)$.
+
+Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. Note that we have enforced that $\hat{t}_{.5}=0$.  
+
+We refer $t_p$ as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS). 
+
+
+## Normal Model
+
+Under the assumption that $g=h=0$, the scale parameter estiamte $\hat{B}$ is simply the sample mean absolute deviation (`mad`).
 
 ```{r}
-set.seed(77652); x = rGH(n = 1e3L, g = -.3, h = .1)
+set.seed(14); rnorm(1e3L) |>
+  letterValue(g_ = FALSE, h_ = FALSE)
 ```
+
+## Tukey's $h$-Model
+
+From Tukey's $h$-transformation (i.e., $g=0$) on LHS and UHS, as well as their difference,
+
+$$
+\begin{cases}
+t_p = B~z_p~e^{hz^2_p/2} & \Rightarrow\quad 
+\ln\left(\dfrac{\hat{t}_p}{z_p}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
+t_{1-p} = B~z_{1-p}~e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p}}{-z_p}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
+t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p} - \hat{t}_p}{-2z_p}\right) = \ln B + h\cdot z^2_p/2 + \varepsilon
+\end{cases}
+$$
+
+We may perform any of these three least squares regressions and let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters (@Hoaglin85, equations (26a), (26b), (27) and (28)).
 
 ```{r}
-letterValue(x, g_ = FALSE, h_ = FALSE)
+#| fig-height: 4
+#| fig-width: 4
+set.seed(63); rGH(1e3L, h = .2) |>
+  letterValue(g_ = FALSE)
 ```
+
+
+
+## Tukey's $g$-Model
+
+From Tukey's $g$-transformation (i.e., $h=0$) on LHS and UHS, as well as their ratio,
+
+$$
+\begin{cases}
+t_p = B(e^{gz_p}-1)/g\\
+t_{1-p} = B(e^{gz_{1-p}}-1)/g\\
+\dfrac{t_{1-p}}{-t_p} = \dfrac{e^{-gz_p}-1}{1-e^{gz_p}} = e^{-gz_p} & \Rightarrow\quad g = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{t_{1-p}}{-t_{p}}\right)
+\end{cases}
+$$
+Let
+
+$$
+\hat{g}_p = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{\hat{t}_{1-p}}{-\hat{t}_{p}}\right)
+$$
+The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (10)).  
+
+
+Let $\hat{B}$ be the slope estimate of either or both of these two least squares regression with a fixed-zero intercept term (@Hoaglin85, equations (8a) and (8b)).
+
+$$
+\begin{cases}
+\hat{t}_p = 0 + B\cdot (e^{\hat{g}z_p}-1)/\hat{g} + \varepsilon\\
+\hat{t}_{1-p} = 0 + B\cdot (e^{\hat{g}z_{1-p}}-1)/\hat{g} + \varepsilon
+\end{cases}
+$$
+
 
 ```{r}
-letterValue(x, g_ = FALSE)
+#| fig-height: 4
+set.seed(43); rGH(1e3L, g = .3) |>
+  letterValue(h_ = FALSE)
 ```
+
+
+
+## Tukey's $g$-&-$h$ Model
+
+From Tukey's $g$-&-$h$ transformation on LHS and UHS, as well as their difference and ratio,
+
+$$
+\begin{cases}
+t_p = Bg^{-1}(e^{gz_p}-1)e^{hz^2_p/2}\\
+t_{1-p} = Bg^{-1}(e^{gz_{1-p}}-1)e^{hz^2_{1-p}/2}\\
+t_{1-p}-t_p = Bg^{-1}(e^{-gz_p}-e^{gz_p})e^{hz^2_p/2}\\
+\dfrac{t_{1-p}}{-t_p} = \dfrac{e^{-gz_p}-1}{1-e^{gz_p}} = e^{-gz_p}\\
+\end{cases}
+$$
+
+Similar to Tukey's $g$-model, the skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31)). 
+
+Let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models and 
+
+$$
+\begin{cases}
+\ln\left(\dfrac{\hat{g}t_p}{e^{\hat{g}z_p}-1}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
+\ln\left(\dfrac{\hat{g}t_{1-p}}{e^{-\hat{g}z_p}-1}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
+\ln\left(\dfrac{\hat{g}(t_{1-p}-t_p)}{e^{-\hat{g}z_p}-e^{\hat{g}z_p}}\right) = \ln B + h\cdot z^2_p/2 + \varepsilon
+\end{cases}
+$$
+
+Note that these three least squares regression models are very sensitive to the skewness parameter estimate $\hat{g}$.  At a smaller sample size, an inaccurate $\hat{g}$ may result in negative slope(s) for $\hat{h}$. In such case we let $\hat{h}=0$.
 
 ```{r}
-letterValue(x, h_ = FALSE)
+#| fig-height: 4
+set.seed(72); rGH(n = 1e4L, A = .5, g = -.3, h = .1) |> # large `n` to ensure accurate \hat{g}
+  letterValue()
 ```
 
-```{r}
-(m3 = letterValue(x))
-```
 
-```{r}
-(fit = fitdist(x, distr = 'GH', start = as.list.default(m3)))
-```
 
-```{r fig.height=7, fig.width=7}
-plot(fit) # fitdistrplus:::plot.fitdist
-```
+
+
+
+
