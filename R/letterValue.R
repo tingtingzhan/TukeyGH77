@@ -60,7 +60,7 @@
 #' @export
 letterValue <- function(
   x,
-  g_ = seq.int(from = .1, to = .3, by = .005),
+  g_ = seq.int(from = .01, to = .3, by = .005),
   h_ = seq.int(from = .1, to = .3, by = .005),
   ...
 ) {
@@ -134,9 +134,10 @@ letterValue <- function(
 
 
 
-#' @importFrom ggplot2 ggplot geom_point geom_smooth scale_color_discrete scale_fill_discrete xlim labs theme
+#' @importFrom ggplot2 ggplot geom_point geom_smooth scale_color_discrete scale_fill_discrete scale_x_continuous sec_axis xlim labs theme
 #' @importFrom grid unit
 #' @importFrom stats .lm.fit qnorm quantile
+#' @importFrom scales label_percent
 #' @importFrom ggplot2 xlim
 lv_Bh_ <- function(x, g, h_, hL, hU) {
   
@@ -207,12 +208,18 @@ lv_Bh_ <- function(x, g, h_, hL, hU) {
   attr(ret, which = 'plot') <- ggplot() + 
     geom_point(mapping = mp, alpha = .2) + 
     geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm') +
-    scale_color_discrete(breaks = 1:3, labels = est) +
-    scale_fill_discrete(breaks = 1:3, labels = est) +
-    xlim(c(0, max(regx))) +
+    scale_color_discrete(name = NULL, breaks = 1:3, labels = est) +
+    scale_fill_discrete(name = NULL, breaks = 1:3, labels = est) +
+    scale_x_continuous(
+      name = '$z_p^2/2$' |> TeX(),
+      sec.axis = sec_axis(
+        name = 'p', 
+        transform = ~ pnorm(sqrt(. * 2), lower.tail = FALSE),
+        labels = label_percent()
+      )
+    ) +
     labs(
-      x = TeX('$z_p^2/2$'), 
-      y = NULL, color = NULL, fill = NULL,
+      y = NULL,
       caption = if (g == 0) {
         'Given g = 0\nCombined: p483, eq(27)\nUpper & Lower: p483, eq(26a-26b)'
       } else sprintf(fmt = 'Given g = %.3f\nUpper: p487,eq(33)\nLower: see p486,bottom', g)
@@ -238,7 +245,7 @@ lv_Bh_ <- function(x, g, h_, hL, hU) {
 
 
 
-#' @importFrom ggplot2 ggplot aes geom_point geom_smooth labs annotate
+#' @importFrom ggplot2 ggplot aes geom_point geom_smooth scale_x_continuous labs annotate
 #' @importFrom latex2exp TeX
 #' @importFrom scales pal_hue
 #' @importFrom stats .lm.fit qnorm quantile
@@ -263,6 +270,15 @@ lv_B_ <- function(x, g, g_) {
     geom_point(mapping = mp, alpha = .2, show.legend = FALSE) + 
     geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm', show.legend = FALSE) +
     geom_smooth(mapping = aes(x = regx, y = q), formula = y ~ x, alpha = .2, colour = 'grey90', linewidth = .3, linetype = 3L, method = 'lm', show.legend = FALSE) +
+    scale_x_continuous(
+      name = '$(e^{gz_p} - 1)/g$' |> TeX(),
+      sec.axis = sec_axis(
+        name = 'p', 
+        transform = ~ pnorm(log(.*g+1)/g),
+        breaks = c(.05, .1, .25, .5, .75, .9, .95),
+        labels = label_percent()
+      )
+    ) +
     annotate(
       geom = 'text', 
       x = c(mean(regx[id]), mean(regx[-id]), mean(regx)), y = c(mean(q[id]), mean(q[-id]), mean(q)), 
@@ -272,7 +288,6 @@ lv_B_ <- function(x, g, g_) {
       label = sprintf(fmt = 'Slope\nB=%.3f', c(BL, BU, B))
     ) +
     labs(
-      x = '$(e^{gz_p} - 1)/g$' |> TeX(), 
       y = '$t_p$' |> TeX(), 
       caption = sprintf(fmt = 'Given g = %.3f; h = 0\nLower Half Spread: p469, eq(8a)\nUpper Half Spread: p469, eq(8b)', g)
     )
@@ -300,7 +315,7 @@ lv_g_ <- function(x, g_, gL, gU) {
   attr(g, which = 'plot') <- ggplot() + 
     geom_point(mapping = aes(x = g_, y = gs)) + 
     geom_hline(yintercept = g, linetype = 2L, alpha = .2) +
-    scale_x_continuous(name = NULL, labels = label_percent()) +
+    scale_x_continuous(name = 'p', labels = label_percent()) +
     scale_y_continuous(
       name = '$\\hat{g}_p$' |> TeX(),
       sec.axis = dup_axis(

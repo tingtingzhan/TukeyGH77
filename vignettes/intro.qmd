@@ -41,13 +41,16 @@ op = par(no.readonly = TRUE)
 #| echo: false
 #| results: asis
 c(
-  '', 'Forward [pipe operator](https://search.r-project.org/R/refmans/base/html/pipeOp.html) introduced in `R` 4.1.0', 
+  '[|>](https://search.r-project.org/R/refmans/base/html/pipeOp.html)', 'Forward pipe operator introduced in `R` 4.1.0', 
   '[`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html)', 'Test of near equality',
   '`CRAN`, `R`', '[The Comprehensive R Archive Network](https://cran.r-project.org)',
   '[`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html)', 'Function plots',
+  '[`.lm.fit`](https://search.r-project.org/R/refmans/stats/html/lmfit.html)', 'Least squares regression, the internal workhorse',
   '[`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html)', 'Median Absolute Deviation',
   '[`median`](https://search.r-project.org/R/refmans/stats/html/median.html)', 'Median',
-  '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path'
+  '[`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html)', 'Normal Distribution',
+  '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path',
+  '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed'
 ) |>
   matrix(nrow = 2L, dimnames = list(c('Term / Abbreviation', 'Description'), NULL)) |>
   t.default() |>
@@ -137,7 +140,7 @@ x |>
   all.equal.numeric(target = x, tolerance = .Machine$double.eps)
 ```
 
-# Tukey $g$-and-$h$ Distribution
+# Tukey $g$-&-$h$ Distribution
 
 ## Probability
 
@@ -187,18 +190,17 @@ curve(qGH(x, g = .3, h = .1), from = 0, to = 1, n = 501L, ylab = 'Quantile')
 ## Simulation
 
 ```{r}
-rGH(n = 1e3L, g = .3, h = .1) |> 
-  hist(xlab = 'TukeyGH(g = .3, h = .1)', main = NULL)
+set.seed(17); rGH(n = 1e3L, g = .3, h = .1) |> 
+  hist(breaks = 30L, xlab = NULL, main = 'TukeyGH(g = .3, h = .1)')
 ```
 
 # Letter-Value Based Estimates (@Hoaglin85)
 
-Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. The location parameter estimate $\hat{A}$ is simply the sample `median`, thus we subtract the sample median from the original sample, and focus on the estimation of $(B, g, h)$.
+Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. The location parameter estimate $\hat{A}$ is simply the sample `median`, thus we subtract $\hat{A}$ from the original sample, and focus on the estimation of $(B, g, h)$.
 
-Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. Note that we have enforced that $\hat{t}_{.5}=0$.  
+Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. Note that we have enforced that $\hat{t}_{.5}=0$.
 
-We refer $t_p$ as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS). 
-
+We refer $t_p$ as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS).
 
 ## Normal Model
 
@@ -225,13 +227,11 @@ $$
 We may perform any of these three least squares regressions and let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters (@Hoaglin85, equations (26a), (26b), (27) and (28)).
 
 ```{r}
-#| fig-height: 4
-#| fig-width: 4
+#| fig-height: 5
+#| fig-width: 4.5
 set.seed(63); rGH(1e3L, h = .2) |>
   letterValue(g_ = FALSE)
 ```
-
-
 
 ## Tukey's $g$-Model
 
@@ -243,14 +243,11 @@ t_p = B(e^{gz_p}-1)/g\\
 t_{1-p} = B(e^{gz_{1-p}}-1)/g\\
 \dfrac{t_{1-p}}{-t_p} = \dfrac{e^{-gz_p}-1}{1-e^{gz_p}} = e^{-gz_p} & \Rightarrow\quad g = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{t_{1-p}}{-t_{p}}\right)
 \end{cases}
-$$
-Let
+$$ Let
 
 $$
 \hat{g}_p = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{\hat{t}_{1-p}}{-\hat{t}_{p}}\right)
-$$
-The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (10)).  
-
+$$ The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (10)).
 
 Let $\hat{B}$ be the slope estimate of either or both of these two least squares regression with a fixed-zero intercept term (@Hoaglin85, equations (8a) and (8b)).
 
@@ -261,14 +258,12 @@ $$
 \end{cases}
 $$
 
-
 ```{r}
-#| fig-height: 4
+#| fig-height: 5
+#| fig-width: 9
 set.seed(43); rGH(1e3L, g = .3) |>
   letterValue(h_ = FALSE)
 ```
-
-
 
 ## Tukey's $g$-&-$h$ Model
 
@@ -283,9 +278,9 @@ t_{1-p}-t_p = Bg^{-1}(e^{-gz_p}-e^{gz_p})e^{hz^2_p/2}\\
 \end{cases}
 $$
 
-Similar to Tukey's $g$-model, the skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31)). 
+Similar to Tukey's $g$-model, the skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31)).
 
-Let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models and 
+Let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models and
 
 $$
 \begin{cases}
@@ -295,17 +290,11 @@ $$
 \end{cases}
 $$
 
-Note that these three least squares regression models are very sensitive to the skewness parameter estimate $\hat{g}$.  At a smaller sample size, an inaccurate $\hat{g}$ may result in negative slope(s) for $\hat{h}$. In such case we let $\hat{h}=0$.
+Note that these three least squares regression models are very sensitive to the skewness parameter estimate $\hat{g}$. At a smaller sample size, an inaccurate $\hat{g}$ may result in negative slope(s) for $\hat{h}$. In such case we let $\hat{h}=0$.
 
 ```{r}
-#| fig-height: 4
+#| fig-height: 5
+#| fig-width: 9
 set.seed(72); rGH(n = 1e4L, A = .5, g = -.3, h = .1) |> # large `n` to ensure accurate \hat{g}
   letterValue()
 ```
-
-
-
-
-
-
-

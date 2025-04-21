@@ -6,7 +6,7 @@
 \usage{
 letterValue(
   x,
-  g_ = seq.int(from = 0.1, to = 0.3, by = 0.005),
+  g_ = seq.int(from = 0.01, to = 0.3, by = 0.005),
   h_ = seq.int(from = 0.1, to = 0.3, by = 0.005),
   ...
 )
