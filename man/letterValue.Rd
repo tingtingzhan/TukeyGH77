@@ -2,12 +2,25 @@
 % Please edit documentation in R/letterValue.R
 \name{letterValue}
 \alias{letterValue}
+\alias{letterValue_g}
+\alias{letterValue_h}
+\alias{letterValue_gh}
 \title{Letter-Value Estimation of Tukey \eqn{g}-&-\eqn{h} Distribution}
 \usage{
-letterValue(
+letterValue_g(
   x,
-  g_ = seq.int(from = 0.01, to = 0.3, by = 0.005),
-  h_ = seq.int(from = 0.1, to = 0.3, by = 0.005),
+  probs_g = seq.int(from = 0.01, to = 0.3, by = 0.005),
+  g_select = "median",
+  ...
+)
+
+letterValue_h(x, probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005), ...)
+
+letterValue_gh(
+  x,
+  probs_g = seq.int(from = 0.01, to = 0.3, by = 0.005),
+  probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005),
+  g_select = "h_optim",
   ...
 )
 }
@@ -15,20 +28,22 @@ letterValue(
 \item{x}{\link[base]{double} \link[base]{vector}, observations \eqn{x},
 missingness \emph{\strong{not}} allowed.}
 
-\item{g_}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{g} parameter.
-Or, use \code{g_ = FALSE} to implement the constraint \eqn{g=0}
+\item{probs_g}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{g} parameter.
+Or, use \code{probs_g = FALSE} to implement the constraint \eqn{g=0}
 (i.e., an \eqn{h}-distribution is estimated).}
 
-\item{h_}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{h} parameter.
-Or, use \code{h_ = FALSE} to implement the constraint \eqn{h=0}
-(i.e., a \eqn{g}-distribution is estimated).}
+\item{g_select}{..}
 
 \item{...}{additional parameters, currently not in use}
+
+\item{probs_h}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{h} parameter.
+Or, use \code{probs_h = FALSE} to implement the constraint \eqn{h=0}
+(i.e., a \eqn{g}-distribution is estimated).}
 }
 \value{
-Function \code{\link[=letterValue]{letterValue()}} returns a \code{'letterValue'} object,
-which is \link[base]{double} \link[base]{vector} of estimates \eqn{(\hat{A}, \hat{B}, \hat{g}, \hat{h})}
-for a Tukey \eqn{g}-&-\eqn{h} distribution.
+Functions \code{\link[=letterValue_g]{letterValue_g()}}, \code{\link[=letterValue_h]{letterValue_h()}} and \code{\link[=letterValue_gh]{letterValue_gh()}}
+returns a \link[base]{length}-\code{4L} \link[base]{double} \link[base]{vector} of
+estimates \eqn{(\hat{A}, \hat{B}, \hat{g}, \hat{h})}.
 }
 \description{
 Letter-value based estimation (Hoaglin, 1985) of
@@ -53,7 +68,7 @@ Function \code{\link[=letterValue]{letterValue()}} plays a similar role as \code
 thus extends \code{fitdistrplus::fitdist} for estimating Tukey \eqn{g}-&-\eqn{h} distributions.
 }
 \note{
-Parameter \code{g_} and \code{h_} does not have to be truly unique; i.e., \link[base]{all.equal} elements are allowed.
+Parameter \code{probs_g} and \code{probs_h} does not have to be truly unique; i.e., \link[base]{all.equal} elements are allowed.
 }
 \references{
 Hoaglin, D.C. (1985). Summarizing Shape Numerically: The \eqn{g}-and-\eqn{h} Distributions.

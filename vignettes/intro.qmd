@@ -49,6 +49,7 @@ c(
   '[`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html)', 'Median Absolute Deviation',
   '[`median`](https://search.r-project.org/R/refmans/stats/html/median.html)', 'Median',
   '[`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html)', 'Normal Distribution',
+  '[`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html)', 'Optimization',
   '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path',
   '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed'
 ) |>
@@ -200,16 +201,7 @@ Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters
 
 Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. Note that we have enforced that $\hat{t}_{.5}=0$.
 
-We refer $t_p$ as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS).
-
-## Normal Model
-
-Under the assumption that $g=h=0$, the scale parameter estiamte $\hat{B}$ is simply the sample mean absolute deviation (`mad`).
-
-```{r}
-set.seed(14); rnorm(1e3L) |>
-  letterValue(g_ = FALSE, h_ = FALSE)
-```
+We refer $t_p$ (or $-t_p$) as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS).
 
 ## Tukey's $h$-Model
 
@@ -218,9 +210,9 @@ From Tukey's $h$-transformation (i.e., $g=0$) on LHS and UHS, as well as their d
 $$
 \begin{cases}
 t_p = B~z_p~e^{hz^2_p/2} & \Rightarrow\quad 
-\ln\left(\dfrac{\hat{t}_p}{z_p}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
-t_{1-p} = B~z_{1-p}~e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p}}{-z_p}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
-t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p} - \hat{t}_p}{-2z_p}\right) = \ln B + h\cdot z^2_p/2 + \varepsilon
+\ln\left(\dfrac{\hat{t}_p}{z_p}\right) = {\color{red}{\ln B_{\text{L}}}}+{\color{red}{h_{\text{L}}}}\cdot z^2_p/2 + \varepsilon\\
+t_{1-p} = B~z_{1-p}~e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p}}{-z_p}\right) = {\color{red}{\ln B_{\text{U}}}}+{\color{red}{h_{\text{U}}}}\cdot z^2_p/2 + \varepsilon\\
+t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p} - \hat{t}_p}{-2z_p}\right) = {\color{red}{\ln B}} + {\color{red}{h}}\cdot z^2_p/2 + \varepsilon
 \end{cases}
 $$
 
@@ -230,7 +222,7 @@ We may perform any of these three least squares regressions and let $(\ln\hat{B}
 #| fig-height: 5
 #| fig-width: 4.5
 set.seed(63); rGH(1e3L, h = .2) |>
-  letterValue(g_ = FALSE)
+  letterValue_h()
 ```
 
 ## Tukey's $g$-Model
@@ -241,20 +233,24 @@ $$
 \begin{cases}
 t_p = B(e^{gz_p}-1)/g\\
 t_{1-p} = B(e^{gz_{1-p}}-1)/g\\
-\dfrac{t_{1-p}}{-t_p} = \dfrac{e^{-gz_p}-1}{1-e^{gz_p}} = e^{-gz_p} & \Rightarrow\quad g = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{t_{1-p}}{-t_{p}}\right)
+\dfrac{-t_p}{t_{1-p}} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p} & \Rightarrow\quad g = \dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{-t_{p}}{t_{1-p}}\right)
 \end{cases}
-$$ Let
+$$
+
+Let (@Hoaglin85, equation (10))
 
 $$
-\hat{g}_p = -\dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{\hat{t}_{1-p}}{-\hat{t}_{p}}\right)
-$$ The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (10)).
+\hat{g}_p = \dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{-\hat{t}_{p}}{\hat{t}_{1-p}}\right)
+$$
+
+The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$.
 
 Let $\hat{B}$ be the slope estimate of either or both of these two least squares regression with a fixed-zero intercept term (@Hoaglin85, equations (8a) and (8b)).
 
 $$
 \begin{cases}
-\hat{t}_p = 0 + B\cdot (e^{\hat{g}z_p}-1)/\hat{g} + \varepsilon\\
-\hat{t}_{1-p} = 0 + B\cdot (e^{\hat{g}z_{1-p}}-1)/\hat{g} + \varepsilon
+\hat{t}_p = 0 + {\color{red}{B_{\text{L}}}}\cdot (e^{\hat{g}z_p}-1)/\hat{g} + \varepsilon\\
+\hat{t}_{1-p} = 0 + {\color{red}{B_{\text{U}}}}\cdot (e^{\hat{g}z_{1-p}}-1)/\hat{g} + \varepsilon
 \end{cases}
 $$
 
@@ -262,7 +258,7 @@ $$
 #| fig-height: 5
 #| fig-width: 9
 set.seed(43); rGH(1e3L, g = .3) |>
-  letterValue(h_ = FALSE)
+  letterValue_g()
 ```
 
 ## Tukey's $g$-&-$h$ Model
@@ -274,27 +270,71 @@ $$
 t_p = Bg^{-1}(e^{gz_p}-1)e^{hz^2_p/2}\\
 t_{1-p} = Bg^{-1}(e^{gz_{1-p}}-1)e^{hz^2_{1-p}/2}\\
 t_{1-p}-t_p = Bg^{-1}(e^{-gz_p}-e^{gz_p})e^{hz^2_p/2}\\
-\dfrac{t_{1-p}}{-t_p} = \dfrac{e^{-gz_p}-1}{1-e^{gz_p}} = e^{-gz_p}\\
+\dfrac{-t_p}{t_{1-p}} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p}
 \end{cases}
 $$
 
-Similar to Tukey's $g$-model, the skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31)).
-
-Let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models and
+Given a skewness parameter estimate $\hat{g}$, let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models (Upper: p487,eq(33). Lower: see p486,bottom)
 
 $$
 \begin{cases}
-\ln\left(\dfrac{\hat{g}t_p}{e^{\hat{g}z_p}-1}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
-\ln\left(\dfrac{\hat{g}t_{1-p}}{e^{-\hat{g}z_p}-1}\right) = \ln B+h\cdot z^2_p/2 + \varepsilon\\
-\ln\left(\dfrac{\hat{g}(t_{1-p}-t_p)}{e^{-\hat{g}z_p}-e^{\hat{g}z_p}}\right) = \ln B + h\cdot z^2_p/2 + \varepsilon
+\ln\left(\dfrac{\hat{g}\hat{t}_p}{e^{\hat{g}z_p}-1}\right) = {\color{red}{\ln B_{\text{L}}}}+{\color{red}{h_{\text{L}}}}\cdot z^2_p/2 + \varepsilon\\
+\ln\left(\dfrac{\hat{g}\hat{t}_{1-p}}{e^{-\hat{g}z_p}-1}\right) = {\color{red}{\ln B_{\text{U}}}}+{\color{red}{h_{\text{U}}}}\cdot z^2_p/2 + \varepsilon\\
+\ln\left(\dfrac{\hat{g}\left(\hat{t}_{1-p}-\hat{t}_p\right)}{e^{-\hat{g}z_p}-e^{\hat{g}z_p}}\right) = {\color{red}{\ln B}} + {\color{red}{h}}\cdot z^2_p/2 + \varepsilon
 \end{cases}
 $$
 
-Note that these three least squares regression models are very sensitive to the skewness parameter estimate $\hat{g}$. At a smaller sample size, an inaccurate $\hat{g}$ may result in negative slope(s) for $\hat{h}$. In such case we let $\hat{h}=0$.
+These three least squares regression models could be very sensitive to the choice of $\hat{g}$. We explore some choices of $\hat{g}$
+
+-   `median`, the ***naive*** choice of the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31));
+-   `B_optim`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+-   `h_optim`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
+
+@fig-gh54 shows a 'good' data set that
+
+-   $\hat{g}_p$ does not have a clear pattern (@fig-gh54, panel `D`);
+-   we have very small of $\text{err}_h$ and $\text{err}_B$ with the naive `median` choice of $\hat{g}$ (@fig-gh54, panel `A`);
+-   difference choice of $\hat{g}$, e.g., `B_optim` or `h_optim`, does not affect much the estimates $\hat{B}$ and $\hat{h}$ (@fig-gh54, panel `B`, `C`).
 
 ```{r}
-#| fig-height: 5
+#| label: fig-gh54
+#| fig-height: 10
 #| fig-width: 9
-set.seed(72); rGH(n = 1e4L, A = .5, g = -.3, h = .1) |> # large `n` to ensure accurate \hat{g}
-  letterValue()
+#| fig-cap: 'A good data set'
+set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |> 
+  letterValue_gh(g_select = 'demo')
 ```
+
+@fig-gh335 shows a 'salvageable' data set that
+
+-   $\hat{g}_p$ has a clear pattern (@fig-gh335, panel `D`);
+-   estimated slope $\hat{h}<0$ for `median` and `B_optim` choices of $\hat{g}$ (@fig-gh335, panel `A` and `B`)
+-   estimated slope $\hat{h}>0$ for `h_optim` choice of $\hat{g}$ (@fig-gh335, panel `C`).
+
+```{r}
+#| label: fig-gh335
+#| fig-height: 10
+#| fig-width: 9
+#| fig-cap: 'A salvageable data set'
+set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
+  letterValue_gh(g_select = 'demo')
+```
+
+@fig-gh39 shows a 'hopeless' data set that
+
+-   $\hat{g}_p$ has a clear pattern (@fig-gh39, panel `D`);
+-   estimated slope $\hat{h}<0$ for all choices of $\hat{g}$ (@fig-gh39, panel `A`, `B`, `C`).
+
+```{r}
+#| label: fig-gh39
+#| fig-height: 10
+#| fig-width: 9
+#| fig-cap: 'A hopeless data set'
+set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
+  letterValue_gh(g_select = 'demo')
+```
+
+Our recommendation
+
+1.  Use `h_optim` for default choice of $\hat{g}$, in function `letterValue_gh()`;
+2.  If estimated slope $\hat{h}<0$ for user-choice of $\hat{g}$, then return $\hat{h}=0$
