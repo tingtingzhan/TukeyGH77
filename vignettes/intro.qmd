@@ -50,6 +50,7 @@ c(
   '[`median`](https://search.r-project.org/R/refmans/stats/html/median.html)', 'Median',
   '[`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html)', 'Normal Distribution',
   '[`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html)', 'Optimization',
+  '[`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html)', 'Standard Deviation',
   '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path',
   '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed'
 ) |>
@@ -195,155 +196,186 @@ set.seed(17); rGH(n = 1e3L, g = .3, h = .1) |>
   hist(breaks = 30L, xlab = NULL, main = 'TukeyGH(g = .3, h = .1)')
 ```
 
-# Letter-Value Based Estimates (@Hoaglin85)
+# Optimized Letter-Value Based Estimates
 
-Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. The location parameter estimate $\hat{A}$ is simply the sample `median`, thus we subtract $\hat{A}$ from the original sample, and focus on the estimation of $(B, g, h)$.
+Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. 
 
-Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. Note that we have enforced that $\hat{t}_{.5}=0$.
+Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. 
 
-We refer $t_p$ (or $-t_p$) as the lower half-spread (LHS) and $t_{1-p}$ as the upper half-spread (UHS).
+We refer $A-t_p$ as the lower half-spread (LHS) and $t_{1-p}-A$ as the upper half-spread (UHS).
 
 ## Tukey's $h$-Model
 
-From Tukey's $h$-transformation (i.e., $g=0$) on LHS and UHS, as well as their difference,
+From Tukey's $h$-transformation (i.e., $g=0$) on LHS and UHS, as well as their summation (@Hoaglin85, equations (26a), (26b), (27) and (28)),
 
 $$
 \begin{cases}
-t_p = B~z_p~e^{hz^2_p/2} & \Rightarrow\quad 
-\ln\left(\dfrac{\hat{t}_p}{z_p}\right) = {\color{blue}{\ln B_{\text{L}}}}+{\color{blue}{h_{\text{L}}}}\cdot z^2_p/2 + \varepsilon\\
-t_{1-p} = B~z_{1-p}~e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p}}{-z_p}\right) = {\color{blue}{\ln B_{\text{U}}}}+{\color{blue}{h_{\text{U}}}}\cdot z^2_p/2 + \varepsilon\\
-t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p} - \hat{t}_p}{-2z_p}\right) = {\color{blue}{\ln B}} + {\color{blue}{h}}\cdot z^2_p/2 + \varepsilon
+A - t_p = -Bz_pe^{hz^2_p/2} & \Rightarrow\quad 
+\ln\left(\dfrac{\hat{A}-\hat{t}_p}{-z_p}\right) = {\color{blue}{\ln B_{\text{L}}}}+{\color{blue}{h_{\text{L}}}}z^2_p/2 + \varepsilon\\
+t_{1-p} - A = Bz_{1-p}e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p}-\hat{A}}{z_{1-p}}\right) = {\color{blue}{\ln B_{\text{U}}}}+{\color{blue}{h_{\text{U}}}}z^2_p/2 + \varepsilon\\
+t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{t}_{1-p} - \hat{t}_p}{-2z_p}\right) = {\color{blue}{\ln B}} + {\color{blue}{h}}z^2_p/2 + \varepsilon
 \end{cases}
 $$
 
-We may perform any of these three least squares regressions and let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters (@Hoaglin85, equations (26a), (26b), (27) and (28)).
+We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_h()`,
+
+-   `A_select = 'median'` (default) of random sample $T$, the ***naive*** choice
+-   `A_select = 'B_optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+-   `A_select = 'h_optim'`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
+
+Note that the estimated intercept and slope parameters $(\ln\hat{B}, \hat{h})$ on both half spreads do *not* depend on $\hat{A}$.  
 
 ```{r}
-#| fig-height: 5
-#| fig-width: 4.5
-set.seed(63); rGH(1e3L, h = .2) |>
-  letterValue_h()
+#| fig-height: 4
+#| fig-width: 9
+set.seed(28); rGH(1e3L, h = .2) |>
+  letterValue_h(A_select = 'demo')
 ```
 
 ## Tukey's $g$-Model
 
-From Tukey's $g$-transformation (i.e., $h=0$) on LHS and UHS, as well as their ratio,
+From Tukey's $g$-transformation (i.e., $h=0$) on LHS and UHS, as well as their ratio (@Hoaglin85, equations (8a), (8b), (10)),
 
 $$
 \begin{cases}
-t_p = B(e^{gz_p}-1)/g\\
-t_{1-p} = B(e^{gz_{1-p}}-1)/g\\
-\dfrac{-t_p}{t_{1-p}} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p} & \Rightarrow\quad g = \dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{-t_{p}}{t_{1-p}}\right)
+t_p - A = B(e^{gz_p}-1)/g & \Rightarrow\quad \hat{t}_p - \hat{A} = {\color{blue}{0}} + {\color{blue}{B_{\text{L}}}}(e^{\hat{g}z_p}-1)/\hat{g} + \varepsilon\\
+t_{1-p} - A = B(e^{gz_{1-p}}-1)/g & \Rightarrow\quad \hat{t}_{1-p} - \hat{A} = {\color{blue}{0}} + {\color{blue}{B_{\text{U}}}}(e^{\hat{g}z_{1-p}}-1)/\hat{g} + \varepsilon\\
+\dfrac{A-t_p}{t_{1-p}-A} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p} & \Rightarrow\quad \hat{g}_p = \dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{\hat{A}-\hat{t}_{p}}{\hat{t}_{1-p}-\hat{A}}\right)
 \end{cases}
 $$
 
-Let (@Hoaglin85, equation (10))
+We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_g()`,
 
-$$
-\hat{g}_p = \dfrac{1}{z_{p}}\cdot \ln\left(\dfrac{-\hat{t}_{p}}{\hat{t}_{1-p}}\right)
-$$
-
-The skewness parameter estimate $\hat{g}$ is the `median` of $\hat{g}_p$.
-
-Let $\hat{B}$ be the slope estimate of either or both of these two least squares regression with a fixed-zero intercept term (@Hoaglin85, equations (8a) and (8b)).
-
-$$
-\begin{cases}
-\hat{t}_p = 0 + {\color{blue}{B_{\text{L}}}}\cdot (e^{\hat{g}z_p}-1)/\hat{g} + \varepsilon\\
-\hat{t}_{1-p} = 0 + {\color{blue}{B_{\text{U}}}}\cdot (e^{\hat{g}z_{1-p}}-1)/\hat{g} + \varepsilon
-\end{cases}
-$$
+-   `A_select = 'median'` of random sample $T$, the ***naive*** choice
+-   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$
 
 ```{r}
-#| fig-height: 5
+#| fig-height: 3
+#| fig-width: 6
+set.seed(43); rGH(1e3L, g = .3) |>
+  letterValue_g(A_select = 'demo')
+```
+
+We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select` of function `letterValue_g()`,
+
+-   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
+-   `g_select = 'optim'` (default), to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+
+```{r}
+#| fig-height: 4
 #| fig-width: 9
 set.seed(43); rGH(1e3L, g = .3) |>
-  letterValue_g()
+  letterValue_g(g_select = 'demo')
 ```
+
 
 ## Tukey's $g$-&-$h$ Model
 
-From Tukey's $g$-&-$h$ transformation on LHS and UHS, as well as their difference and ratio,
+From Tukey's $g$-&-$h$ transformation on LHS and UHS, as well as their difference and ratio (Upper: p487,eq(33). Lower: see p486,bottom),
 
 $$
 \begin{cases}
-t_p = Bg^{-1}(e^{gz_p}-1)e^{hz^2_p/2}\\
-t_{1-p} = Bg^{-1}(e^{gz_{1-p}}-1)e^{hz^2_{1-p}/2}\\
-t_{1-p}-t_p = Bg^{-1}(e^{-gz_p}-e^{gz_p})e^{hz^2_p/2}\\
-\dfrac{-t_p}{t_{1-p}} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p}
+t_p - A= Bg^{-1}(e^{gz_p}-1)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{g}(\hat{t}_p-\hat{A})}{e^{\hat{g}z_p}-1}\right) = {\color{blue}{\ln B_{\text{L}}}}+{\color{blue}{h_{\text{L}}}}z^2_p/2 + \varepsilon\\
+t_{1-p} - A = Bg^{-1}(e^{gz_{1-p}}-1)e^{hz^2_{1-p}/2} & \Rightarrow\quad \ln\left(\dfrac{\hat{g}(\hat{t}_{1-p}-\hat{A})}{e^{-\hat{g}z_p}-1}\right) = {\color{blue}{\ln B_{\text{U}}}}+{\color{blue}{h_{\text{U}}}}z^2_p/2 + \varepsilon\\
+t_{1-p}-t_p = Bg^{-1}(e^{-gz_p}-e^{gz_p})e^{hz^2_p/2} & \Rightarrow\quad 
+\ln\left(\dfrac{\hat{g}(\hat{t}_{1-p}-\hat{t}_p)}{e^{-\hat{g}z_p}-e^{\hat{g}z_p}}\right) = {\color{blue}{\ln B}} + {\color{blue}{h}}z^2_p/2 + \varepsilon\\
+\dfrac{A-t_p}{t_{1-p}-A} = \dfrac{1-e^{gz_p}}{e^{-gz_p}-1} = e^{gz_p} & \Rightarrow\quad \hat{g}_p\quad \text{same as}\ g\text{-model}
 \end{cases}
 $$
 
-Given a skewness parameter estimate $\hat{g}$, let $(\ln\hat{B}, \hat{h})$ be the estimated intercept and slope parameters of either of these three least squares regression models (Upper: p487,eq(33). Lower: see p486,bottom)
+The estimates $(\ln\hat{B}_{\text{L}}, \hat{h}_{\text{L}})$, $(\ln\hat{B}_{\text{U}}, \hat{h}_{\text{U}})$ and $(\ln\hat{B}, \hat{h})$ could all be very sensitive to the choice of $\hat{g}$.
 
-$$
-\begin{cases}
-\ln\left(\dfrac{\hat{g}\hat{t}_p}{e^{\hat{g}z_p}-1}\right) = {\color{blue}{\ln B_{\text{L}}}}+{\color{blue}{h_{\text{L}}}}\cdot z^2_p/2 + \varepsilon\\
-\ln\left(\dfrac{\hat{g}\hat{t}_{1-p}}{e^{-\hat{g}z_p}-1}\right) = {\color{blue}{\ln B_{\text{U}}}}+{\color{blue}{h_{\text{U}}}}\cdot z^2_p/2 + \varepsilon\\
-\ln\left(\dfrac{\hat{g}\left(\hat{t}_{1-p}-\hat{t}_p\right)}{e^{-\hat{g}z_p}-e^{\hat{g}z_p}}\right) = {\color{blue}{\ln B}} + {\color{blue}{h}}\cdot z^2_p/2 + \varepsilon
-\end{cases}
-$$
+Similar to Tukey's $g$-model, we first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_gh()`,
 
-These three least squares regression models could be very sensitive to the choice of $\hat{g}$. We explore some choices of $\hat{g}$ with parameter `g_select` of function `letterValue_gh()`,
+-   `A_select = 'median'` of random sample $T$, the ***naive*** choice
+-   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$.
 
--   `g_select = 'median'` of $\hat{g}_p$ (@Hoaglin85, equation (31)), the ***naive*** choice
+
+We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select` of function `letterValue_gh()`,
+
+-   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
 -   `g_select = 'B_optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
--   `g_select = 'h_optim'`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
--   `g_select = 'true'` simulating parameter $g$
+-   `g_select = 'h_optim'` (default), to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
 
-In the following examples, the parameter `g_select = 'demo'` indicates an demonstration of estimates $(\hat{B}, \hat{h})$, $(\hat{B}_{\text{L}}, \hat{h}_{\text{L}})$ and $(\hat{B}_{\text{U}}, \hat{h}_{\text{U}})$ based on all available choices of $\hat{g}$.
+### Perfect example
 
-### Good example
+This is a 'perfect' data set that
 
-@fig-gh54 shows a 'good' data set that
+-   all choices of $\hat{A}$ are pretty close, in terms of the dispersion and/or pattern of $\hat{g}_p$, @fig-gh54-A;
+-   all choices of $\hat{g}$ have very small $\text{err}_h$ and $\text{err}_B$, @fig-gh54.
 
--   $\hat{g}_p$ does not have a clear pattern (panel `E`);
--   we have very small $\text{err}_h$ and $\text{err}_B$ with the naive `'median'` choice of $\hat{g}$ (panel `A`);
--   difference choice of $\hat{g}$, e.g., `'B_optim'`, `'h_optim'` or `'true'` (panel `B`, `C`, `D`), does not affect much the estimates $\hat{B}$ and $\hat{h}$.
+```{r}
+#| label: fig-gh54-A
+#| fig-height: 3
+#| fig-width: 6
+#| fig-align: left
+#| fig-cap: 'Perfect data set: choices of A'
+set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |> 
+  letterValue_gh(A_select = 'demo')
+```
 
 ```{r}
 #| label: fig-gh54
-#| fig-height: 8
-#| fig-width: 9
-#| fig-cap: 'A good data set'
+#| fig-height: 7
+#| fig-width: 7
+#| fig-align: left
+#| fig-cap: 'Perfect data set: choices of g'
 set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |> 
-  letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
+  letterValue_gh(g_select = 'demo')
 ```
 
 ### Salvageable example
 
-@fig-gh335 shows a 'salvageable' data set that
+This is a 'salvageable' data set that
 
--   $\hat{g}_p$ has a clear pattern (panel `E`);
--   estimated slope $\hat{h}<0$ for `'median'` and `'B_optim'` choices of $\hat{g}$ (panel `A`, `B`);
--   estimated slope $\hat{h}>0$ for `'h_optim'` choice of $\hat{g}$ (panel `C`), also rather close to the `'true'` choice of $\hat{g}$ (panel `D`).
+-   the `'optim'` choice of $\hat{A}$ not only reduces the standard deviations of $\hat{g}_p$, but also removes the clear pattern in $\hat{g}_p$, @fig-gh335-A;
+-   the `'h_optim'` choice of $\hat{g}$ provides decent estimated $\hat{h}$, @fig-gh335.
+
+```{r}
+#| label: fig-gh335-A
+#| fig-height: 3
+#| fig-width: 6
+#| fig-align: left
+#| fig-cap: 'Salvageable data set: choices of A'
+set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
+  letterValue_gh(A_select = 'demo')
+```
 
 ```{r}
 #| label: fig-gh335
-#| fig-height: 8
-#| fig-width: 9
-#| fig-cap: 'A salvageable data set'
+#| fig-height: 7
+#| fig-width: 7
+#| fig-align: left
+#| fig-cap: 'Salvageable data set: choices of g'
 set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
-  letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
+  letterValue_gh(g_select = 'demo')
 ```
 
 ### Hopeless example
 
-@fig-gh39 shows a 'hopeless' data set that
+This is a 'hopeless' data set that
 
--   $\hat{g}_p$ has a clear pattern (panel `E`);
--   estimated slope $\hat{h}<0$ for all, including the `'true'`, choices of $\hat{g}$ (panel `A`, `B`, `C`, `D`).
+-   the `'optim'` choice of $\hat{A}$ neither reduces much the standard deviations of $\hat{g}_p$, nor removes the clear pattern in $\hat{g}_p$, @fig-gh39-A;
+-   estimated slope $\hat{h}<0$ for all choices of $\hat{g}$, @fig-gh39.
+
+```{r}
+#| label: fig-gh39-A
+#| fig-height: 3
+#| fig-width: 6
+#| fig-align: left
+#| fig-cap: 'Hopeless data set: choices of A'
+set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
+  letterValue_gh(A_select = 'demo')
+```
 
 ```{r}
 #| label: fig-gh39
-#| fig-height: 8
-#| fig-width: 9
-#| fig-cap: 'A hopeless data set'
+#| fig-height: 7
+#| fig-width: 7
+#| fig-align: left
+#| fig-cap: 'Hopeless data set: choices of g'
 set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
-  letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
+  letterValue_gh(g_select = 'demo')
 ```
 
-### Our recommendation
-
-1.  Make `g_select = 'h_optim'` the default argument of function `letterValue_gh()`;
-2.  If the estimated slope $\hat{h}<0$ for any user-choice of $\hat{g}$, then return $\hat{h}=0$
+Good new is that we do not see 'hopeless' data sets often in simulations. In this case, we recommend reporting $\hat{h}=0$.
