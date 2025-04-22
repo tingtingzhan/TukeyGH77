@@ -21,14 +21,14 @@ letterValue_gh(
   probs_g = seq.int(from = 0.01, to = 0.3, by = 0.005),
   probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005),
   A_select = c("optim", "median", "demo"),
-  g_select = c("h_optim", "median", "B_optim", "demo"),
+  g_select = c("h.optim", "median", "B.optim", "demo"),
   ...
 )
 
 letterValue_h(
   x,
   probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005),
-  A_select = c("median", "B_optim", "h_optim", "demo"),
+  A_select = c("median", "B.optim", "h.optim", "demo"),
   ...
 )
 }

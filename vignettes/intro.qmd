@@ -198,9 +198,9 @@ set.seed(17); rGH(n = 1e3L, g = .3, h = .1) |>
 
 # Optimized Letter-Value Based Estimates
 
-Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$. 
+Consider a random sample $T$ from Tukey's $g$-&-$h$ distribution with parameters $(A,B,g,h)$.
 
-Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$. 
+Let $\hat{t}_p$ be the $p$-th sample quantile, for $0<p<.5$.
 
 We refer $A-t_p$ as the lower half-spread (LHS) and $t_{1-p}-A$ as the upper half-spread (UHS).
 
@@ -220,10 +220,10 @@ $$
 We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_h()`,
 
 -   `A_select = 'median'` (default) of random sample $T$, the ***naive*** choice
--   `A_select = 'B_optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
--   `A_select = 'h_optim'`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
+-   `A_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+-   `A_select = 'h.optim'`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
 
-Note that the estimated intercept and slope parameters $(\ln\hat{B}, \hat{h})$ on both half spreads do *not* depend on $\hat{A}$.  
+Note that the estimated intercept and slope parameters $(\ln\hat{B}, \hat{h})$ on both half spreads do *not* depend on $\hat{A}$.
 
 ```{r}
 #| fig-height: 4
@@ -268,7 +268,6 @@ set.seed(43); rGH(1e3L, g = .3) |>
   letterValue_g(g_select = 'demo')
 ```
 
-
 ## Tukey's $g$-&-$h$ Model
 
 From Tukey's $g$-&-$h$ transformation on LHS and UHS, as well as their difference and ratio (Upper: p487,eq(33). Lower: see p486,bottom),
@@ -290,12 +289,11 @@ Similar to Tukey's $g$-model, we first explore some choices of $\hat{A}$ between
 -   `A_select = 'median'` of random sample $T$, the ***naive*** choice
 -   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$.
 
-
 We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select` of function `letterValue_gh()`,
 
 -   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
--   `g_select = 'B_optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
--   `g_select = 'h_optim'` (default), to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
+-   `g_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+-   `g_select = 'h.optim'` (default), to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
 
 ### Perfect example
 
@@ -329,7 +327,7 @@ set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |>
 This is a 'salvageable' data set that
 
 -   the `'optim'` choice of $\hat{A}$ not only reduces the standard deviations of $\hat{g}_p$, but also removes the clear pattern in $\hat{g}_p$, @fig-gh335-A;
--   the `'h_optim'` choice of $\hat{g}$ provides decent estimated $\hat{h}$, @fig-gh335.
+-   the `'h.optim'` choice of $\hat{g}$ provides decent estimated $\hat{h}$, @fig-gh335.
 
 ```{r}
 #| label: fig-gh335-A

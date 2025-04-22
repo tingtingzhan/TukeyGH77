@@ -54,7 +54,7 @@ letterValue_gh <- function(
   probs_g = seq.int(from = .01, to = .3, by = .005),
   probs_h = seq.int(from = .1, to = .3, by = .005),
   A_select = c('optim', 'median', 'demo'),
-  g_select = c('h_optim', 'median', 'B_optim', 'demo'),
+  g_select = c('h.optim', 'median', 'B.optim', 'demo'),
   ...
 ) {
   
@@ -82,7 +82,7 @@ letterValue_gh <- function(
   if (g_select == 'demo') {
     p_g <- g |> 
       attr(which = 'plot', exact = TRUE)
-    p_Bh <- c('median', 'B_optim', 'h_optim') |>
+    p_Bh <- c('median', 'B.optim', 'h.optim') |>
       lapply(FUN = \(s) {
         g <- lv_gh_g(x, A = A, probs_g = probs_g, probs_h = probs_h, g_select = s, ...) 
         lv_Bh_(x = x, A = A, g = g, probs_g = probs_g, probs_h = probs_h) |>
@@ -201,8 +201,7 @@ lv_Bh_ <- function(
     ) +
     
     labs(
-      title = names(g),
-      subtitle = sprintf(fmt = '$\\hat{g} = %.3f$', g) |> TeX(),
+      subtitle = sprintf(fmt = '$\\hat{g}_{%s} = %.3f$', names(g), g) |> TeX(),
       y = NULL
     )
   
@@ -234,7 +233,7 @@ lv_gh_g <- function(
     x, A,
     probs_g, 
     probs_h,
-    g_select = c('median', 'B_optim', 'h_optim', 'demo'),
+    g_select = c('median', 'B.optim', 'h.optim', 'demo'),
     true,
     ...
 ) {
@@ -263,22 +262,22 @@ lv_gh_g <- function(
     return(ret)
   }
 
-  if (g_select %in% c('B_optim', 'demo')) {
+  if (g_select %in% c('B.optim', 'demo')) {
     g_B_ <- optimize(f = \(g) foo(g)['errB'], interval = g_intv_)$minimum
   }
   
-  if (g_select %in% c('h_optim', 'demo')) {
+  if (g_select %in% c('h.optim', 'demo')) {
     g_h_ <- optimize(f = \(g) foo(g)['errh'], interval = g_intv_)$minimum
   }
   
   g <- switch(g_select, median = {
     c(median = g_median_)
-  }, B_optim = {
-    c(B_optim = g_B_)
-  }, h_optim = {
-    c(h_optim = g_h_)
+  }, B.optim = {
+    c(B.optim = g_B_)
+  }, h.optim = {
+    c(h.optim = g_h_)
   }, demo = {
-    c(median = g_median_, B_optim = g_B_, h_optim = g_h_)
+    c(median = g_median_, B.optim = g_B_, h.optim = g_h_)
   })
   
   attr(g, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) +

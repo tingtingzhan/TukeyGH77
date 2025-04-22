@@ -7,7 +7,7 @@
 letterValue_h <- function(
     x,
     probs_h = seq.int(from = .1, to = .3, by = .005),
-    A_select = c('median', 'B_optim', 'h_optim', 'demo'),
+    A_select = c('median', 'B.optim', 'h.optim', 'demo'),
     ...
 ) {
   
@@ -36,7 +36,7 @@ letterValue_h <- function(
       p$labels$title <- sprintf(fmt = '(%s)', pane) |> 
         paste(p$labels$title)
       p + Bh_layer
-    }, s = c('median', 'B_optim', 'h_optim'), pane = LETTERS[seq_len(3L)], SIMPLIFY = FALSE) |>
+    }, s = c('median', 'B.optim', 'h.optim'), pane = LETTERS[seq_len(3L)], SIMPLIFY = FALSE) |>
       Reduce(f = `+`)
     return(p)
   }, {
@@ -57,7 +57,7 @@ letterValue_h <- function(
 #' 
 #' @param x,probs_h see function [letterValue_h()]
 #' 
-#' @param A_select `'median'` (default), `'B_optim'` or `'h_optim'`
+#' @param A_select `'median'` (default), `'B.optim'` or `'h.optim'`
 #' 
 #' @param ... additional parameters, currently of no use
 #' 
@@ -68,7 +68,7 @@ letterValue_h <- function(
 #' @importFrom rlang .data
 #' @keywords internal
 #' @export
-lv_h_A <- function(x, probs_h, A_select = c('median', 'B_optim', 'h_optim'), ...) {
+lv_h_A <- function(x, probs_h, A_select = c('median', 'B.optim', 'h.optim'), ...) {
 
   z <- qnorm(probs_h)
   r_x <- z^2 / 2
@@ -95,9 +95,9 @@ lv_h_A <- function(x, probs_h, A_select = c('median', 'B_optim', 'h_optim'), ...
   
   A <- switch(A_select, median = {
     median.default(x)
-  }, B_optim = {
+  }, B.optim = {
     optimize(f = \(A) foo(A)['errB'], interval = A_intv_)$minimum
-  }, h_optim = {
+  }, h.optim = {
     optimize(f = \(A) foo(A)['errh'], interval = A_intv_)$minimum
   })
   
@@ -133,8 +133,7 @@ lv_h_A <- function(x, probs_h, A_select = c('median', 'B_optim', 'h_optim'), ...
     ) +
     
     labs(
-      title = A_select,
-      subtitle = sprintf(fmt = '$\\hat{A}=%.3f$', A) |> TeX(),
+      subtitle = sprintf(fmt = '$\\hat{A}_{%s}=%.3f$', A_select, A) |> TeX(),
       y = NULL,
       caption = 'Constrained at g = 0'
     )

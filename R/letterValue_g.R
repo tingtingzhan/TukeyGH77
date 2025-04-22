@@ -119,8 +119,7 @@ lv_g_A <- function(x, probs_g, A_select = c('optim', 'median'), ...) {
     scale_x_continuous(name = NULL, labels = label_percent()) +
     labs(
       y = sprintf(fmt = '$\\hat{g}_p$ (sd=%.3f)', sd(gs)) |> TeX(),
-      title = A_select,
-      subtitle = sprintf(fmt = '$\\hat{A}=%.3f$', A) |> TeX()
+      subtitle = sprintf(fmt = '$\\hat{A}_{%s}=%.3f$', A_select, A) |> TeX()
     )
   
   return(A)
@@ -249,8 +248,7 @@ lv_B_ <- function(x, A, g, probs_g) {
     ) +
     
     labs(
-      title = names(g),
-      subtitle = sprintf(fmt = '$\\hat{g} = %.3f$', g) |> TeX(),
+      subtitle = sprintf(fmt = '$\\hat{g}_{%s} = %.3f$', names(g), g) |> TeX(),
       y = '$t_p$' |> TeX(), 
       caption = 'Constrained at h = 0'
     )
