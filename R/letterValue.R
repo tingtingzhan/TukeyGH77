@@ -21,8 +21,7 @@
 #' 
 #' @param g_select ..
 #' 
-#' @param true (optional) \link[base]{double} \link[base]{vector} of \eqn{(B,g,h)}, 
-#' for function [letterValue_gh()] with option `g_select = 'demo'`
+# @param true (optional) \link[base]{double} \link[base]{vector} of \eqn{(B,g,h)}, for function [letterValue_gh()] with option `g_select = 'demo'`
 #' 
 #' @param ... additional parameters, currently not in use
 #' 
