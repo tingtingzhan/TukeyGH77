@@ -21,6 +21,9 @@
 #' 
 #' @param g_select ..
 #' 
+#' @param true (optional) \link[base]{double} \link[base]{vector} of \eqn{(B,g,h)}, 
+#' for function [letterValue_gh()] with option `g_select = 'demo'`
+#' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
@@ -120,6 +123,7 @@ letterValue_gh <- function(
   probs_g = seq.int(from = .01, to = .3, by = .005),
   probs_h = seq.int(from = .1, to = .3, by = .005),
   g_select = 'h_optim',
+  #true, 
   ...
 ) {
   
@@ -131,18 +135,25 @@ letterValue_gh <- function(
   probs_h <- probs_h |> check_letterVal_(x = x)
   
   g <- lv_g_(x, probs_g = probs_g, probs_h = probs_h, g_select = g_select, ...)
+  
   if (g_select == 'demo') {
+    
+    #if (missing(true)) stop('must provide true `B`, `g` and `h`')
+    
     demo_plot <- mapply(FUN = \(g, nm, pane) {
       names(g) <- nm
-      p <- lv_Bh_(x, g = g, probs_h = probs_h) |> 
-        attr(which = 'plot', exact = TRUE)
-      p + labs(title = sprintf(fmt = '(%s). %s', pane, nm))
+      (lv_Bh_(x, g = g, probs_h = probs_h, ...) |> 
+          attr(which = 'plot', exact = TRUE)) +
+        labs(title = sprintf(fmt = '(%s). %s', pane, nm))
     }, g = g, nm = names(g), pane = LETTERS[seq_along(g)], SIMPLIFY = FALSE) |>
       Reduce(f = `+`)
+    
     demo_plot <- demo_plot + 
       (attr(g, which = 'plot', exact = 'TRUE') + 
          labs(title = sprintf(fmt = '(%s). Estimated g', LETTERS[length(g) + 1L])))
-    return(demo_plot)
+    
+    return(demo_plot + plot_layout(ncol = 3L))
+    
   }
   
   Bh <- lv_Bh_(x, g = g, probs_h = probs_h)
@@ -180,9 +191,8 @@ check_letterVal_ <- function(x, probs) {
 
 
 
-
-
-#' @importFrom ggplot2 ggplot geom_point geom_smooth scale_color_discrete scale_fill_discrete scale_x_continuous sec_axis xlim labs theme
+#' @importFrom geomtextpath geom_textabline geom_textsmooth
+#' @importFrom ggplot2 ggplot geom_point geom_smooth geom_abline scale_color_discrete scale_fill_discrete scale_x_continuous sec_axis xlim labs theme
 #' @importFrom grid unit
 #' @importFrom stats .lm.fit qnorm quantile
 #' @importFrom scales label_percent
@@ -192,6 +202,7 @@ lv_Bh_ <- function(
     g, 
     probs_h,
     do.plot = TRUE,
+    true,
     ...
 ) {
   
@@ -243,13 +254,28 @@ lv_Bh_ <- function(
   mp <- aes(
     x = rep(regx, times = 3L), 
     y = c(regy, regyL, regyU), 
+    #label = est |> rep(each = length(probs_h)),
     color = hs, fill = hs)
   
+  mp_smooth <- aes(
+    x = rep(regx, times = 3L), 
+    y = c(regy, regyL, regyU), 
+    label = sprintf(fmt = '%s: B=%.3f, h=%.3f', c('Both', 'Lower', 'Upper'), B, h) |> rep(each = length(probs_h)),
+    color = hs)
+  
   attr(ret, which = 'plot') <- ggplot() + 
-    geom_point(mapping = mp, alpha = .2) + 
-    geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm') +
-    scale_color_discrete(name = NULL, breaks = 1:3, labels = est) +
-    scale_fill_discrete(name = NULL, breaks = 1:3, labels = est) +
+    geom_point(mapping = mp, alpha = .2, show.legend = FALSE) + 
+    #geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm', se = FALSE) +
+    geom_textsmooth(
+      mapping = mp_smooth, formula = y ~ x, linewidth = .5, linetype = 2L, method = 'lm', show.legend = FALSE
+    ) +
+    # (if (!missing(true)) geom_abline(intercept = log(true['B']), slope = true['h'], colour = 'grey40', linetype = 2L)) +
+    (if (!missing(true)) geom_textabline(
+      intercept = log(true['B']), slope = true['h'], 
+      label = sprintf(fmt = 'true: B = %.2g, h = %.2g', true['B'], true['h']), 
+      colour = 'grey40', linetype = 2L)) + 
+    #scale_color_discrete(name = NULL, breaks = 1:3, labels = est) +
+    #scale_fill_discrete(name = NULL, breaks = 1:3, labels = est) +
     scale_x_continuous(
       name = '$z_p^2/2$' |> TeX(),
       sec.axis = sec_axis(
@@ -266,7 +292,7 @@ lv_Bh_ <- function(
     ) + 
     theme(
       legend.position = 'inside',
-      legend.position.inside = c(.8, .25),
+      legend.position.inside = c(.8, .3),
       legend.key.spacing.y = unit(.01, units = 'npc')
     )
   
@@ -308,8 +334,8 @@ lv_B_ <- function(x, g, probs_g) {
     
   attr(B, which = 'plot') <- ggplot() + 
     geom_point(mapping = mp, alpha = .2, show.legend = FALSE) + 
-    geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm', show.legend = FALSE) +
-    geom_smooth(mapping = aes(x = regx, y = q), formula = y ~ x, alpha = .2, colour = 'grey90', linewidth = .3, linetype = 3L, method = 'lm', show.legend = FALSE) +
+    geom_smooth(mapping = mp, formula = y ~ x, alpha = .2, linewidth = .5, linetype = 2L, method = 'lm', se = FALSE, show.legend = FALSE) +
+    geom_smooth(mapping = aes(x = regx, y = q), formula = y ~ x, alpha = .2, colour = 'grey90', linewidth = .3, linetype = 3L, method = 'lm', se = FALSE, show.legend = FALSE) +
     scale_x_continuous(
       name = '$(e^{gz_p} - 1)/g$' |> TeX(),
       sec.axis = sec_axis(
@@ -342,7 +368,7 @@ lv_B_ <- function(x, g, probs_g) {
 
 
 #' @importFrom stats optimize qnorm quantile
-#' @importFrom ggplot2 ggplot aes geom_point geom_hline scale_x_continuous scale_y_continuous dup_axis guide_axis labs
+#' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous scale_y_continuous dup_axis guide_axis labs
 #' @importFrom latex2exp TeX
 #' @importFrom scales label_percent
 lv_g_ <- function(
@@ -350,6 +376,7 @@ lv_g_ <- function(
     probs_g, 
     probs_h,
     g_select = c('median', 'B_optim', 'h_optim', 'demo'),
+    true,
     ...
 ) {
   
@@ -389,12 +416,11 @@ lv_g_ <- function(
   }, h_optim = {
     c(h_optim = g_h_)
   }, demo = {
-    c(median = g_median_, B_optim = g_B_, h_optim = g_h_)
+    c(median = g_median_, B_optim = g_B_, h_optim = g_h_, true = unname(true['g']))
   })
   
   attr(g, which = 'plot') <- ggplot() + 
     geom_point(mapping = aes(x = probs_g, y = gs)) + 
-    geom_hline(yintercept = g, linetype = 2L, alpha = .2) +
     scale_x_continuous(name = 'p', labels = label_percent()) +
     scale_y_continuous(
       name = '$\\hat{g}_p$' |> TeX(),

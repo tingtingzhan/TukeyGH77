@@ -39,6 +39,9 @@ Or, use \code{probs_g = FALSE} to implement the constraint \eqn{g=0}
 \item{probs_h}{\link[base]{double} \link[base]{vector}, probabilities used for estimating \eqn{h} parameter.
 Or, use \code{probs_h = FALSE} to implement the constraint \eqn{h=0}
 (i.e., a \eqn{g}-distribution is estimated).}
+
+\item{true}{(optional) \link[base]{double} \link[base]{vector} of \eqn{(B,g,h)},
+for function \code{\link[=letterValue_gh]{letterValue_gh()}} with option \code{g_select = 'demo'}}
 }
 \value{
 Functions \code{\link[=letterValue_g]{letterValue_g()}}, \code{\link[=letterValue_h]{letterValue_h()}} and \code{\link[=letterValue_gh]{letterValue_gh()}}
