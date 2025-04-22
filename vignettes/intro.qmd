@@ -286,17 +286,20 @@ $$
 
 These three least squares regression models could be very sensitive to the choice of $\hat{g}$. We explore some choices of $\hat{g}$ with parameter `g_select` of function `letterValue_gh()`,
 
--   `median`, the ***naive*** choice of the `median` of $\hat{g}_p$ (@Hoaglin85, equation (31));
--   `B_optim`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
--   `h_optim`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
--   `true`, the true simulating parameter $g$
--   `demo`stration, of estimates $(\hat{B}, \hat{h})$, $(\hat{B}_{\text{L}}, \hat{h}_{\text{L}})$ and $(\hat{B}_{\text{U}}, \hat{h}_{\text{U}})$ based on all available choices of $\hat{g}$
+-   `g_select = 'median'` of $\hat{g}_p$ (@Hoaglin85, equation (31)), the ***naive*** choice
+-   `g_select = 'B_optim'`, to minimize $\text{err}_B =(\hat{B}_{\text{U}}-\hat{B}_{\text{L}})^2$
+-   `g_select = 'h_optim'`, to minimize $\text{err}_h =(\hat{h}_{\text{U}}-\hat{h}_{\text{L}})^2$
+-   `g_select = 'true'` simulating parameter $g$
+
+In the following examples, the parameter `g_select = 'demo'` indicates an demonstration of estimates $(\hat{B}, \hat{h})$, $(\hat{B}_{\text{L}}, \hat{h}_{\text{L}})$ and $(\hat{B}_{\text{U}}, \hat{h}_{\text{U}})$ based on all available choices of $\hat{g}$.
+
+### Good example
 
 @fig-gh54 shows a 'good' data set that
 
--   $\hat{g}_p$ does not have a clear pattern (@fig-gh54 `E`);
--   we have very small $\text{err}_h$ and $\text{err}_B$ with the naive `median` choice of $\hat{g}$ (@fig-gh54 `A`);
--   difference choice of $\hat{g}$, e.g., `B_optim`, `h_optim` or `true` (@fig-gh54 `B`, `C`, `D`), does not affect much the estimates $\hat{B}$ and $\hat{h}$.
+-   $\hat{g}_p$ does not have a clear pattern (panel `E`);
+-   we have very small $\text{err}_h$ and $\text{err}_B$ with the naive `'median'` choice of $\hat{g}$ (panel `A`);
+-   difference choice of $\hat{g}$, e.g., `'B_optim'`, `'h_optim'` or `'true'` (panel `B`, `C`, `D`), does not affect much the estimates $\hat{B}$ and $\hat{h}$.
 
 ```{r}
 #| label: fig-gh54
@@ -307,11 +310,13 @@ set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
 ```
 
+### Salvageable example
+
 @fig-gh335 shows a 'salvageable' data set that
 
--   $\hat{g}_p$ has a clear pattern (@fig-gh335 `E`);
--   estimated slope $\hat{h}<0$ for `median` and `B_optim` choices of $\hat{g}$ (@fig-gh335 `A`, `B`)
--   estimated slope $\hat{h}>0$ for `h_optim` choice of $\hat{g}$ (@fig-gh335 `C`).
+-   $\hat{g}_p$ has a clear pattern (panel `E`);
+-   estimated slope $\hat{h}<0$ for `'median'` and `'B_optim'` choices of $\hat{g}$ (panel `A`, `B`);
+-   estimated slope $\hat{h}>0$ for `'h_optim'` choice of $\hat{g}$ (panel `C`), also rather close to the `'true'` choice of $\hat{g}$ (panel `D`).
 
 ```{r}
 #| label: fig-gh335
@@ -322,10 +327,12 @@ set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
 ```
 
+### Hopeless example
+
 @fig-gh39 shows a 'hopeless' data set that
 
--   $\hat{g}_p$ has a clear pattern (@fig-gh39 `E`);
--   estimated slope $\hat{h}<0$ for all choices of $\hat{g}$, including the true simulating parameter $g$ (@fig-gh39 `A`, `B`, `C`, `D`).
+-   $\hat{g}_p$ has a clear pattern (panel `E`);
+-   estimated slope $\hat{h}<0$ for all, including the `'true'`, choices of $\hat{g}$ (panel `A`, `B`, `C`, `D`).
 
 ```{r}
 #| label: fig-gh39
@@ -336,7 +343,7 @@ set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(g_select = 'demo', true = c(B = 1, g = -.3, h = .1))
 ```
 
-Our recommendation
+### Our recommendation
 
-1.  Use `h_optim` for default choice of $\hat{g}$, in function `letterValue_gh()`;
-2.  If estimated slope $\hat{h}<0$ for user-choice of $\hat{g}$, then return $\hat{h}=0$
+1.  Make `g_select = 'h_optim'` the default argument of function `letterValue_gh()`;
+2.  If the estimated slope $\hat{h}<0$ for any user-choice of $\hat{g}$, then return $\hat{h}=0$

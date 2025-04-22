@@ -143,7 +143,8 @@ letterValue_gh <- function(
       names(g) <- nm
       (lv_Bh_(x, g = g, probs_h = probs_h, ...) |> 
           attr(which = 'plot', exact = TRUE)) +
-        labs(title = sprintf(fmt = '(%s). %s', pane, nm))
+        labs(title = sprintf(fmt = '(%s). $\\hat{g}=%.3f$; %s', pane, g, nm) |> TeX(),
+             caption = NULL)
     }, g = g, nm = names(g), pane = LETTERS[seq_along(g)], SIMPLIFY = FALSE) |>
       Reduce(f = `+`)
     
@@ -288,11 +289,6 @@ lv_Bh_ <- function(
       caption = if (g == 0) {
         'Constrained at g = 0'
       } else sprintf(fmt = '%s g = %.3f', names(g), g)
-    ) + 
-    theme(
-      legend.position = 'inside',
-      legend.position.inside = c(.8, .3),
-      legend.key.spacing.y = unit(.01, units = 'npc')
     )
   
   return(ret)
