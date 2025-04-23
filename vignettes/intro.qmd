@@ -19,7 +19,7 @@ vignette: >
 
 # Introduction
 
-This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents 
+This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/package=TukeyGH77), [Github](https://github.com/tingtingzhan/TukeyGH77)) documents
 
 -   @Tukey77's $g$-&-$h$ transformation and its inverse
 -   @Tukey77's $g$-&-$h$ distribution density, cumulative probability, quantile, and random generator
@@ -241,15 +241,13 @@ t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat
 \end{cases}
 $$
 
-Function `letterValue_h()` estimates Tukey's $h$-model.
-We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
+Function `letterValue_h()` estimates Tukey's $h$-model. We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` (default) of random sample $T$, the ***naive*** choice
 -   `A_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 -   `A_select = 'h.optim'`, to minimize $\text{err}_h =(\hat{h}_\text{U}-\hat{h}_\text{L})^2$
 
 Note that the estimated intercept and slope parameters $(\ln\hat{B}, \hat{h})$ on both half spreads do *not* depend on $\hat{A}$.
-
 
 ```{r}
 set.seed(28); rGH(1e3L, h = .2) |>
@@ -281,8 +279,7 @@ t_{1-p} - A = B(e^{gz_{1-p}}-1)/g & \Rightarrow\quad \hat{t}_{1-p} - \hat{A} = {
 \end{cases}
 $$
 
-
-Function `letterValue_g()` estimates Tukey's $g$-model.  We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
+Function `letterValue_g()` estimates Tukey's $g$-model. We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` of random sample $T$, the ***naive*** choice
 -   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$
@@ -291,8 +288,6 @@ We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentil
 
 -   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
 -   `g_select = 'optim'` (default), to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
-
-
 
 ```{r}
 set.seed(43); rGH(1e3L, g = .3) |>
@@ -313,7 +308,6 @@ set.seed(43); rGH(1e3L, g = .3) |>
 set.seed(43); rGH(1e3L, g = .3) |>
   letterValue_g(A_select = 'demo')
 ```
-
 
 ```{r}
 #| fig-height: 4
@@ -342,7 +336,7 @@ $$
 
 The estimates $(\ln\hat{B}_\text{L}, \hat{h}_\text{L})$, $(\ln\hat{B}_\text{U}, \hat{h}_\text{U})$ and $(\ln\hat{B}, \hat{h})$ could all be very sensitive to the choice of $\hat{g}$.
 
-Function `letterValue_gh()` estimates Tukey's $g$-&-$h$ model.  We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
+Function `letterValue_gh()` estimates Tukey's $g$-&-$h$ model. We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` of random sample $T$, the ***naive*** choice
 -   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$.
@@ -352,8 +346,6 @@ We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentil
 -   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
 -   `g_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 -   `g_select = 'h.optim'` (default), to minimize $\text{err}_h =(\hat{h}_\text{U}-\hat{h}_\text{L})^2$
-
-
 
 ### Perfect example
 
@@ -430,7 +422,6 @@ set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh()
 ```
 
-
 This is a 'hopeless' data set that
 
 -   $\hat{A}_\text{optim}$ neither reduces much the standard deviations of $\hat{g}_p$, nor removes the clear pattern in $\hat{g}_p$, @fig-gh39-A;
@@ -464,4 +455,3 @@ Good new is that we do not see 'hopeless' data sets often in simulations ($\appr
 
 ::: {#refs}
 :::
-

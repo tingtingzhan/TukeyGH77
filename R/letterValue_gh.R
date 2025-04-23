@@ -23,8 +23,6 @@
 #' 
 #' @param g_select ..
 #' 
-# @param true (optional) \link[base]{double} \link[base]{vector} of \eqn{(B,g,h)}, for function [letterValue_gh()] with option `g_select = 'demo'`
-#' 
 #' @param ... additional parameters, currently not in use
 #' 
 #' @details 
@@ -55,7 +53,7 @@ letterValue_gh <- function(
   probs_h = seq.int(from = .1, to = .3, by = .005),
   A_select = c('optim', 'median', 'demo'),
   g_select = c('h.optim', 'median', 'B.optim', 'demo'),
-  do.plot = FALSE,
+  #do.plot = FALSE,
   ...
 ) {
   
@@ -100,10 +98,9 @@ letterValue_gh <- function(
   Bh <- lv_Bh_(x, A = A, g = g, probs_h = probs_h)
   
   ret <- c(A = A, B = unname(Bh['B']), g = unname(g), h = unname(Bh['h']))
-  if (do.plot) {
-    attr(ret, which = 'plot') <- attr(g, which = 'plot', exact = TRUE) +
-      attr(Bh, which = 'plot', exact = TRUE)
-  }
+  #if (do.plot) {
+  #  attr(ret, which = 'plot') <- attr(g, which = 'plot', exact = TRUE) + attr(Bh, which = 'plot', exact = TRUE)
+  #}
   return(ret)
   
 }
@@ -145,7 +142,6 @@ check_letterVal_ <- function(x, probs) {
 lv_Bh_ <- function(
     x, A, g, 
     probs_h,
-    true,
     ...
 ) {
   
@@ -187,12 +183,6 @@ lv_Bh_ <- function(
     geom_textsmooth(mapping = aes(x = r_x, y = r_y), 
                     label = sprintf(fmt = 'B=%.3f, h=%.3f', B, h), 
                     color = 'grey40', formula = y ~ x, linetype = 2L, method = 'lm', show.legend = FALSE) +
-    
-    # (if (!missing(true)) geom_abline(intercept = log(true['B']), slope = true['h'], colour = 'grey40', linetype = 2L)) +
-    (if (!missing(true)) geom_textabline(
-      intercept = log(true['B']), slope = true['h'], 
-      label = sprintf(fmt = 'true: B = %.2g, h = %.2g', true['B'], true['h']), 
-      colour = 'grey40', linetype = 2L)) + 
     
     scale_x_continuous(
       name = '$z_p^2/2$' |> TeX(),
@@ -237,7 +227,6 @@ lv_gh_g <- function(
     probs_g, 
     probs_h,
     g_select = c('median', 'B.optim', 'h.optim', 'demo'),
-    true,
     ...
 ) {
   

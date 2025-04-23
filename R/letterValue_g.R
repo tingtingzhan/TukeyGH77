@@ -9,7 +9,7 @@ letterValue_g <- function(
     probs_g = seq.int(from = .01, to = .3, by = .005),
     A_select = c('optim', 'median', 'demo'),
     g_select = c('optim', 'median', 'demo'),
-    do.plot = FALSE,
+    #do.plot = FALSE,
     ...
 ) {
   
@@ -53,14 +53,14 @@ letterValue_g <- function(
   B <- lv_B_(x, A = A, g = g, probs_g = probs_g)
   
   ret <- c(A = A, B = B, g = unname(g), h = 0)
-  if (do.plot) {
-    attr(ret, which = 'plot') <- list(
-      attr(g, which = 'plot', exact = TRUE),
-      attr(B, which = 'plot', exact = TRUE)
-    ) |> 
-      add_pane() |> 
-      Reduce(f = `+`)
-  }
+  #if (do.plot) {
+  #  attr(ret, which = 'plot') <- list(
+  #    attr(g, which = 'plot', exact = TRUE),
+  #    attr(B, which = 'plot', exact = TRUE)
+  #  ) |> 
+  #    add_pane() |> 
+  #    Reduce(f = `+`)
+  #}
   return(ret)
   
 }

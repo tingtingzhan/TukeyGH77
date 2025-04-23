@@ -8,7 +8,7 @@ letterValue_h <- function(
     x,
     probs_h = seq.int(from = .1, to = .3, by = .005),
     A_select = c('median', 'B.optim', 'h.optim', 'demo'),
-    do.plot = FALSE,
+    #do.plot = FALSE,
     ...
 ) {
   
@@ -32,7 +32,7 @@ letterValue_h <- function(
   
   if (A_select == 'demo') {# plot only!!
     p <- mapply(FUN = \(s, pane) {
-      p <- lv_h_A(x = x, probs_h = probs_h, A_select = s, do.plot = TRUE) |>
+      p <- lv_h_A(x = x, probs_h = probs_h, A_select = s) |>
         attr(which = 'plot', exact = TRUE)
       p$labels$title <- sprintf(fmt = '(%s)', pane) |> 
         paste(p$labels$title)
@@ -44,9 +44,7 @@ letterValue_h <- function(
   
   A <- lv_h_A(x = x, probs_h = probs_h, A_select = A_select)
   ret <- c(A = A, B = B, g = 0, h = pmax(0, h))
-  if (do.plot) {
-    attr(ret, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) + Bh_layer
-  }
+  #if (do.plot) attr(ret, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) + Bh_layer
   return(ret)
   
 }
@@ -120,11 +118,6 @@ lv_h_A <- function(x, probs_h, A_select = c('median', 'B.optim', 'h.optim'), ...
     geom_point(data = aes_d_, mapping = aes(x = .data$x, y = .data$y, color = .data$label), alpha = .2, show.legend = FALSE) + 
     
     geom_textsmooth(data = aes_d_, mapping = aes(x = .data$x, y = .data$y, label = .data$label, color = .data$label), formula = y ~ x, linewidth = .5, linetype = 2L, method = 'lm', show.legend = FALSE) +
-    
-    #(if (!missing(true)) geom_textabline(
-    #  intercept = log(true['B']), slope = true['h'], 
-    #  label = sprintf(fmt = 'true: B = %.2g, h = %.2g', true['B'], true['h']), 
-    #  colour = 'grey40', linetype = 2L)) + 
     
     scale_x_continuous(
       name = '$z_p^2/2$' |> TeX(),
