@@ -8,6 +8,7 @@ letterValue_h <- function(
     x,
     probs_h = seq.int(from = .1, to = .3, by = .005),
     A_select = c('median', 'B.optim', 'h.optim', 'demo'),
+    do.plot = FALSE,
     ...
 ) {
   
@@ -29,9 +30,9 @@ letterValue_h <- function(
   
   A_select <- match.arg(A_select)
   
-  switch(A_select, demo = {# plot only!!
+  if (A_select == 'demo') {# plot only!!
     p <- mapply(FUN = \(s, pane) {
-      p <- lv_h_A(x = x, probs_h = probs_h, A_select = s) |>
+      p <- lv_h_A(x = x, probs_h = probs_h, A_select = s, do.plot = TRUE) |>
         attr(which = 'plot', exact = TRUE)
       p$labels$title <- sprintf(fmt = '(%s)', pane) |> 
         paste(p$labels$title)
@@ -39,12 +40,14 @@ letterValue_h <- function(
     }, s = c('median', 'B.optim', 'h.optim'), pane = LETTERS[seq_len(3L)], SIMPLIFY = FALSE) |>
       Reduce(f = `+`)
     return(p)
-  }, {
-    A <- lv_h_A(x = x, probs_h = probs_h, A_select = A_select)
-    ret <- c(A = A, B = B, g = 0, h = pmax(0, h))
+  }
+  
+  A <- lv_h_A(x = x, probs_h = probs_h, A_select = A_select)
+  ret <- c(A = A, B = B, g = 0, h = pmax(0, h))
+  if (do.plot) {
     attr(ret, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) + Bh_layer
-    return(ret)
-  })
+  }
+  return(ret)
   
 }
 

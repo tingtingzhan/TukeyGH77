@@ -9,6 +9,7 @@ letterValue_g <- function(
     probs_g = seq.int(from = .01, to = .3, by = .005),
     A_select = c('optim', 'median', 'demo'),
     g_select = c('optim', 'median', 'demo'),
+    do.plot = FALSE,
     ...
 ) {
   
@@ -52,10 +53,14 @@ letterValue_g <- function(
   B <- lv_B_(x, A = A, g = g, probs_g = probs_g)
   
   ret <- c(A = A, B = B, g = unname(g), h = 0)
-  attr(ret, which = 'plot') <- list(
-    attr(g, which = 'plot', exact = TRUE),
-    attr(B, which = 'plot', exact = TRUE)
-  ) |> add_pane() |> Reduce(f = `+`)
+  if (do.plot) {
+    attr(ret, which = 'plot') <- list(
+      attr(g, which = 'plot', exact = TRUE),
+      attr(B, which = 'plot', exact = TRUE)
+    ) |> 
+      add_pane() |> 
+      Reduce(f = `+`)
+  }
   return(ret)
   
 }
@@ -96,7 +101,7 @@ lv_g_A <- function(x, probs_g, A_select = c('optim', 'median'), ...) {
   tU <- quantile(x, probs = 1 - probs_g)
   z <- qnorm(probs_g)
   
-  foo <- function(A) {
+  foo <- \(A) {
     lhs <- A - tL
     uhs <- tU - A
     gs <- log(lhs / uhs) / z
@@ -150,13 +155,7 @@ lv_g_A <- function(x, probs_g, A_select = c('optim', 'median'), ...) {
 #' @importFrom scales label_percent
 #' @keywords internal
 #' @export
-lv_g_g <- function(
-    x, 
-    A,
-    probs_g, 
-    g_select = c('optim', 'median', 'demo'),
-    ...
-) {
+lv_g_g <- function(x, A, probs_g, g_select = c('optim', 'median', 'demo'), ...) {
   
   tL <- quantile(x, probs = probs_g)
   tU <- quantile(x, probs = 1 - probs_g)

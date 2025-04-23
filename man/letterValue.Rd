@@ -13,6 +13,7 @@ letterValue_g(
   probs_g = seq.int(from = 0.01, to = 0.3, by = 0.005),
   A_select = c("optim", "median", "demo"),
   g_select = c("optim", "median", "demo"),
+  do.plot = FALSE,
   ...
 )
 
@@ -22,6 +23,7 @@ letterValue_gh(
   probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005),
   A_select = c("optim", "median", "demo"),
   g_select = c("h.optim", "median", "B.optim", "demo"),
+  do.plot = FALSE,
   ...
 )
 
@@ -29,6 +31,7 @@ letterValue_h(
   x,
   probs_h = seq.int(from = 0.1, to = 0.3, by = 0.005),
   A_select = c("median", "B.optim", "h.optim", "demo"),
+  do.plot = FALSE,
   ...
 )
 }

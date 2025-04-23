@@ -4,12 +4,20 @@
 \alias{lv_h_A}
 \title{Estimate \eqn{\hat{A}} from Tukey's \eqn{h}-distribution}
 \usage{
-lv_h_A(x, probs_h, A_select = c("median", "B.optim", "h.optim"), ...)
+lv_h_A(
+  x,
+  probs_h,
+  A_select = c("median", "B.optim", "h.optim"),
+  do.plot = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x, probs_h}{see function \code{\link[=letterValue_h]{letterValue_h()}}}
 
 \item{A_select}{\code{'median'} (default), \code{'B.optim'} or \code{'h.optim'}}
+
+\item{do.plot}{..}
 
 \item{...}{additional parameters, currently of no use}
 }

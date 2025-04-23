@@ -55,6 +55,7 @@ letterValue_gh <- function(
   probs_h = seq.int(from = .1, to = .3, by = .005),
   A_select = c('optim', 'median', 'demo'),
   g_select = c('h.optim', 'median', 'B.optim', 'demo'),
+  do.plot = FALSE,
   ...
 ) {
   
@@ -99,8 +100,10 @@ letterValue_gh <- function(
   Bh <- lv_Bh_(x, A = A, g = g, probs_h = probs_h)
   
   ret <- c(A = A, B = unname(Bh['B']), g = unname(g), h = unname(Bh['h']))
-  attr(ret, which = 'plot') <- attr(g, which = 'plot', exact = TRUE) +
-    attr(Bh, which = 'plot', exact = TRUE)
+  if (do.plot) {
+    attr(ret, which = 'plot') <- attr(g, which = 'plot', exact = TRUE) +
+      attr(Bh, which = 'plot', exact = TRUE)
+  }
   return(ret)
   
 }
