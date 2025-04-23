@@ -75,7 +75,8 @@ c(
   '[`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html)', 'Optimization',
   '[`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html)', 'Standard Deviation',
   '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path',
-  '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed'
+  '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed',
+  '[`vuniroot`](https://search.r-project.org/CRAN/refmans/rstpm2/html/vuniroot.html)', 'Vectorised one-dimensional root-finding, in package [`rstpm2`](https://CRAN.R-project.org/package=rstpm2)'
 ) |>
   matrix(nrow = 2L, dimnames = list(c('Term / Abbreviation', 'Description'), NULL)) |>
   t.default() |>
@@ -129,7 +130,7 @@ g^{-1}\ln(gt+1), & g\neq0 \\
 z:\ z\cdot H_h(z) = t, & h>0 \\
 z:\ z\cdot G_g(z)\cdot H_h(z) = t, & g\neq 0,\ h>0 
 \end{cases}
-$$ does not have a closed analytical form when $h>0$, but the numerical solution could be found by using a root-finding algorithm \citep{Brent71}.
+$$ does not have a closed analytical form when $h>0$, but the numerical solution could be found by using @Brent73's root-finding algorithm implemented in function `rstpm2::vuniroot()`.
 
 Inverse Tukey's transformation function `gh2z()` transforms the Tukey's $g$-&-$h$ random variable $t_{gh}$ to standard normal variable $z$. A closed analytical form of $\zeta_{gh}$ exists when $h=0$, thus the discrepancy is merely a floating-point error.
 
@@ -240,7 +241,8 @@ t_{1-p}-t_p = B(z_{1-p}-z_p)e^{hz^2_p/2} & \Rightarrow\quad \ln\left(\dfrac{\hat
 \end{cases}
 $$
 
-We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_h()`,
+Function `letterValue_h()` estimates Tukey's $h$-model.
+We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` (default) of random sample $T$, the ***naive*** choice
 -   `A_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
@@ -248,7 +250,6 @@ We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percent
 
 Note that the estimated intercept and slope parameters $(\ln\hat{B}, \hat{h})$ on both half spreads do *not* depend on $\hat{A}$.
 
-Function `letterValue_h()` estimates Tukey's $h$-model.
 
 ```{r}
 set.seed(28); rGH(1e3L, h = .2) |>
@@ -280,18 +281,18 @@ t_{1-p} - A = B(e^{gz_{1-p}}-1)/g & \Rightarrow\quad \hat{t}_{1-p} - \hat{A} = {
 \end{cases}
 $$
 
-We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_g()`,
+
+Function `letterValue_g()` estimates Tukey's $g$-model.  We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` of random sample $T$, the ***naive*** choice
 -   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$
 
-
-We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select` of function `letterValue_g()`,
+We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select`,
 
 -   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
 -   `g_select = 'optim'` (default), to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 
-Function `letterValue_g()` estimates Tukey's $g$-model.
+
 
 ```{r}
 set.seed(43); rGH(1e3L, g = .3) |>
@@ -341,18 +342,18 @@ $$
 
 The estimates $(\ln\hat{B}_\text{L}, \hat{h}_\text{L})$, $(\ln\hat{B}_\text{U}, \hat{h}_\text{U})$ and $(\ln\hat{B}, \hat{h})$ could all be very sensitive to the choice of $\hat{g}$.
 
-Similar to Tukey's $g$-model, we first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select` of function `letterValue_gh()`,
+Function `letterValue_gh()` estimates Tukey's $g$-&-$h$ model.  We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
 -   `A_select = 'median'` of random sample $T$, the ***naive*** choice
 -   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$.
 
-We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select` of function `letterValue_gh()`,
+We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select`,
 
 -   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
 -   `g_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 -   `g_select = 'h.optim'` (default), to minimize $\text{err}_h =(\hat{h}_\text{U}-\hat{h}_\text{L})^2$
 
-Function `letterValue_gh()` estimates Tukey's $g$-&-$h$ model.
+
 
 ### Perfect example
 
