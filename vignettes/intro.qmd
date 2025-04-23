@@ -56,6 +56,9 @@ library(TukeyGH77)
 library(knitr) # for tables in this vignette
 op = par(no.readonly = TRUE)
 #options(mc.cores = 1L) # for CRAN submission
+library(ggplot2)
+theme_bw() |>
+  theme_set()
 ```
 
 ## Terms and Abbreviations

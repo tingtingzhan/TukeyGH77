@@ -188,6 +188,9 @@ lv_g_g <- function(x, A, probs_g, g_select = c('optim', 'median', 'demo'), ...) 
   })
   
   attr(g, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) +
+    (if (g_select %in% c('optim', 'demo')) {
+      geom_rect(mapping = aes(xmin = -Inf, xmax = Inf, ymin = g_intv_[1L], ymax = g_intv_[2L]), fill = 'grey70', alpha = .2) 
+    }) +
     scale_y_continuous(
       sec.axis = dup_axis(
         name = NULL, 

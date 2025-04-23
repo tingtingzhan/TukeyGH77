@@ -219,7 +219,7 @@ lv_Bh_ <- function(
 
 
 #' @importFrom stats optimize qnorm quantile
-#' @importFrom ggplot2 ggplot aes geom_point scale_x_continuous scale_y_continuous dup_axis guide_axis labs
+#' @importFrom ggplot2 ggplot aes geom_point geom_rect scale_x_continuous scale_y_continuous dup_axis guide_axis labs
 #' @importFrom latex2exp TeX
 #' @importFrom scales label_percent
 lv_gh_g <- function(
@@ -273,6 +273,9 @@ lv_gh_g <- function(
   })
   
   attr(g, which = 'plot') <- attr(A, which = 'plot', exact = TRUE) +
+    (if (g_select %in% c('B.optim', 'h.optim', 'demo')) {
+      geom_rect(mapping = aes(xmin = -Inf, xmax = Inf, ymin = g_intv_[1L], ymax = g_intv_[2L]), fill = 'grey70', alpha = .2)
+    }) +
     scale_y_continuous(
       sec.axis = dup_axis(
         name = NULL, 
