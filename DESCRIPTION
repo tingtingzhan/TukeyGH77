@@ -10,12 +10,6 @@ Description: Density, cumulative density, quantile and
        transformation, as well as the letter-value based estimates
        (Hoaglin 1985).
 License: GPL-2
-Depends: R (>= 4.4.0)
-Imports: ggplot2, latex2exp, patchwork, rlang, scales, geomtextpath, rstpm2
-Suggests: 
-    knitr,
-    quarto,
-    rmarkdown
 Encoding: UTF-8
 Authors@R: c(person(given = "Tingting", family = "Zhan", role = c("aut",
         "cre"), email = c("tingtingzhan@gmail.com"), comment = c(ORCID =
@@ -26,4 +20,7 @@ Authors@R: c(person(given = "Tingting", family = "Zhan", role = c("aut",
 Language: en-US
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+Depends: R (>= 4.5.0)
+Imports: ggplot2, latex2exp, patchwork, rlang, scales, geomtextpath, rstpm2
+Suggests: knitr, quarto, rmarkdown
 VignetteBuilder: quarto
