@@ -2,7 +2,7 @@ Package: TukeyGH77
 Type: Package
 Title: Tukey g-&-h Distribution
 Version: 0.2.0
-Date: 2025-04-23
+Date: 2025-05-12
 Description: Density, cumulative density, quantile and
        simulation of the 4-parameter Tukey g-and-h (1977) distributions. The
        quantile-based transformation (Hoaglin 1985
