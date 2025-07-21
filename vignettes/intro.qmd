@@ -9,7 +9,7 @@ toc: true
 toc-location: left
 toc-depth: 4
 toc-title: ''
-editor: visual
+editor: source
 bibliography: TukeyGH77.bib
 vignette: >
   %\VignetteIndexEntry{intro}
@@ -53,7 +53,6 @@ library(TukeyGH77)
 
 ```{r}
 #| echo: false
-library(knitr) # for tables in this vignette
 op = par(no.readonly = TRUE)
 #options(mc.cores = 1L) # for CRAN submission
 library(ggplot2)
@@ -63,29 +62,21 @@ theme_bw() |>
 
 ## Terms and Abbreviations
 
-```{r}
-#| echo: false
-#| results: asis
-c(
-  '[|>](https://search.r-project.org/R/refmans/base/html/pipeOp.html)', 'Forward pipe operator introduced in `R` 4.1.0', 
-  '[`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html)', 'Test of near equality',
-  '`CRAN`, `R`', '[The Comprehensive R Archive Network](https://cran.r-project.org)',
-  '[`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html)', 'Function plots',
-  '[`.lm.fit`](https://search.r-project.org/R/refmans/stats/html/lmfit.html)', 'Least squares regression, the internal workhorse',
-  '[`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html)', 'Median Absolute Deviation',
-  '[`median`](https://search.r-project.org/R/refmans/stats/html/median.html)', 'Median',
-  '[`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html)', 'Normal Distribution',
-  '[`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html)', 'Optimization',
-  '[`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html)', 'Standard Deviation',
-  '[`search`](https://search.r-project.org/R/refmans/base/html/search.html)', 'Search path',
-  '[`seed`](https://search.r-project.org/R/refmans/base/html/Random.html)', 'Random number generation seed',
-  '[`vuniroot`](https://search.r-project.org/CRAN/refmans/rstpm2/html/vuniroot.html)', 'Vectorised one-dimensional root-finding, in package [`rstpm2`](https://CRAN.R-project.org/package=rstpm2)'
-) |>
-  matrix(nrow = 2L, dimnames = list(c('Term / Abbreviation', 'Description'), NULL)) |>
-  t.default() |>
-  as.data.frame.matrix() |> 
-  kable() 
-```
+| Term / Abbreviation | Description |
+|------------------------------------|------------------------------------|
+| [`|>`](https://search.r-project.org/R/refmans/base/html/pipeOp.html) | Forward pipe operator introduced in `R` 4.1.0 |
+| [`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html) | Test of near equality |
+| `CRAN`, `R` | [The Comprehensive R Archive Network](https://cran.r-project.org) |
+| [`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html) | Function plots |
+| [`.lm.fit`](https://search.r-project.org/R/refmans/stats/html/lmfit.html) | Least squares regression, the internal workhorse |
+| [`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html) | Median Absolute Deviation |
+| [`median`](https://search.r-project.org/R/refmans/stats/html/median.html) | Median |
+| [`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html) | Normal Distribution |
+| [`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html) | Optimization |
+| [`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html) | Standard Deviation |
+| [`search`](https://search.r-project.org/R/refmans/base/html/search.html) | Search path |
+| [`seed`](https://search.r-project.org/R/refmans/base/html/Random.html) | Random number generation seed |
+| [`vuniroot`](https://search.r-project.org/CRAN/refmans/rstpm2/html/vuniroot.html) | Vectorised one-dimensional root-finding, in package [`rstpm2`](https://CRAN.R-project.org/package=rstpm2) |
 
 # Tukey's $g$-&-$h$ Transformation
 
