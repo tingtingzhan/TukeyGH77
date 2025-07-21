@@ -1,6 +1,7 @@
 ---
 title: "Optimized Letter-Value Based Estimates for Tukey's $g$-&-$h$ Distribution"
 author: Tingting Zhan
+date: "`r format(Sys.time(), 'Last updated %d %B, %Y')`"
 format: 
   html:
     page-layout: full
@@ -10,6 +11,10 @@ toc-location: left
 toc-depth: 4
 toc-title: ''
 editor: source
+knitr:
+  opts_chunk: 
+    collapse: true
+    comment: "#>" 
 bibliography: TukeyGH77.bib
 vignette: >
   %\VignetteIndexEntry{intro}
@@ -40,7 +45,7 @@ And eventually make their way to [`CRAN`](https://CRAN.R-project.org/package=Tuk
 ```{r}
 #| warning: false
 #| eval: false
-utils::install.packages('TukeyGH77')
+utils::install.packages('TukeyGH77') # Developers: do NOT use!
 ```
 
 ## Note to Users
@@ -59,24 +64,6 @@ library(ggplot2)
 theme_bw() |>
   theme_set()
 ```
-
-## Terms and Abbreviations
-
-| Term / Abbreviation | Description |
-|------------------------------------|------------------------------------|
-| [`|>`](https://search.r-project.org/R/refmans/base/html/pipeOp.html) | Forward pipe operator introduced in `R` 4.1.0 |
-| [`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html) | Test of near equality |
-| `CRAN`, `R` | [The Comprehensive R Archive Network](https://cran.r-project.org) |
-| [`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html) | Function plots |
-| [`.lm.fit`](https://search.r-project.org/R/refmans/stats/html/lmfit.html) | Least squares regression, the internal workhorse |
-| [`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html) | Median Absolute Deviation |
-| [`median`](https://search.r-project.org/R/refmans/stats/html/median.html) | Median |
-| [`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html) | Normal Distribution |
-| [`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html) | Optimization |
-| [`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html) | Standard Deviation |
-| [`search`](https://search.r-project.org/R/refmans/base/html/search.html) | Search path |
-| [`seed`](https://search.r-project.org/R/refmans/base/html/Random.html) | Random number generation seed |
-| [`vuniroot`](https://search.r-project.org/CRAN/refmans/rstpm2/html/vuniroot.html) | Vectorised one-dimensional root-finding, in package [`rstpm2`](https://CRAN.R-project.org/package=rstpm2) |
 
 # Tukey's $g$-&-$h$ Transformation
 
@@ -237,7 +224,7 @@ $$
 
 Function `letterValue_h()` estimates Tukey's $h$-model. We explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
--   `A_select = 'median'` (default) of random sample $T$, the ***naive*** choice
+-   `A_select = 'median'` (default) of random sample $T$, the naïve choice in @Hoaglin85
 -   `A_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 -   `A_select = 'h.optim'`, to minimize $\text{err}_h =(\hat{h}_\text{U}-\hat{h}_\text{L})^2$
 
@@ -275,12 +262,12 @@ $$
 
 Function `letterValue_g()` estimates Tukey's $g$-model. We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
--   `A_select = 'median'` of random sample $T$, the ***naive*** choice
--   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$
+-   `A_select = 'median'` of random sample $T$, the naïve choice in @Hoaglin85
+-   `A_select = 'optim'` (default), to minimize the standard deviation `stats::sd()` of $\hat{g}_p$
 
 We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select`,
 
--   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
+-   `g_select = 'median'` of $\hat{g}_p$, the naïve choice in @Hoaglin85 
 -   `g_select = 'optim'` (default), to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 
 ```{r}
@@ -332,12 +319,12 @@ The estimates $(\ln\hat{B}_\text{L}, \hat{h}_\text{L})$, $(\ln\hat{B}_\text{U}, 
 
 Function `letterValue_gh()` estimates Tukey's $g$-&-$h$ model. We first explore some choices of $\hat{A}$ between the $45$th to $55$th sample percentile, with parameter `A_select`,
 
--   `A_select = 'median'` of random sample $T$, the ***naive*** choice
--   `A_select = 'optim'` (default), to minimize the standard deviation of $\hat{g}_p$.
+-   `A_select = 'median'` of random sample $T$, the naïve choice in @Hoaglin85
+-   `A_select = 'optim'` (default), to minimize the standard deviation `stats::sd()` of $\hat{g}_p$.
 
 We then explore some choices of $\hat{g}$ between the $40$th to $60$th percentile of $\hat{g}_p$, with parameter `g_select`,
 
--   `g_select = 'median'` of $\hat{g}_p$, the ***naive*** choice
+-   `g_select = 'median'` of $\hat{g}_p$, the naïve choice in @Hoaglin85
 -   `g_select = 'B.optim'`, to minimize $\text{err}_B =(\hat{B}_\text{U}-\hat{B}_\text{L})^2$
 -   `g_select = 'h.optim'` (default), to minimize $\text{err}_h =(\hat{h}_\text{U}-\hat{h}_\text{L})^2$
 
@@ -444,6 +431,28 @@ set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
 ```
 
 Good new is that we do not see 'hopeless' data sets often in simulations ($\approx 6.3\%$ in random seeds `1:1e3L`). In this case, we recommend reporting $\hat{h}=0$.
+
+# Appendix 
+
+## Terms and Abbreviations
+
+| Term / Abbreviation | Description |
+|------------------------------------|------------------------------------|
+| [`|>`](https://search.r-project.org/R/refmans/base/html/pipeOp.html) | Forward pipe operator introduced in `R` 4.1.0 |
+| [`all.equal.numeric`](https://search.r-project.org/R/refmans/base/html/all.equal.html) | Test of near equality |
+| `CRAN`, `R` | [The Comprehensive R Archive Network](https://cran.r-project.org) |
+| [`curve`](https://search.r-project.org/R/refmans/graphics/html/curve.html) | Function plots |
+| [`.lm.fit`](https://search.r-project.org/R/refmans/stats/html/lmfit.html) | Least squares regression, the internal workhorse |
+| [`mad`](https://search.r-project.org/R/refmans/stats/html/mad.html) | Median Absolute Deviation |
+| [`median`](https://search.r-project.org/R/refmans/stats/html/median.html) | Median |
+| [`dnorm`, `pnorm`, `qnorm`, `rnorm`](https://search.r-project.org/R/refmans/stats/html/Normal.html) | Normal Distribution |
+| [`optim`](https://search.r-project.org/R/refmans/stats/html/optim.html), [`optimize`](https://search.r-project.org/R/refmans/stats/html/optimize.html) | Optimization |
+| [`sd`](https://search.r-project.org/R/refmans/stats/html/sd.html) | Standard Deviation |
+| [`search`](https://search.r-project.org/R/refmans/base/html/search.html) | Search path |
+| [`seed`](https://search.r-project.org/R/refmans/base/html/Random.html) | Random number generation seed |
+| [`vuniroot`](https://search.r-project.org/CRAN/refmans/rstpm2/html/vuniroot.html) | Vectorised one-dimensional root-finding, in package [`rstpm2`](https://CRAN.R-project.org/package=rstpm2) |
+
+
 
 # References
 
