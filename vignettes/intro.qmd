@@ -243,7 +243,8 @@ set.seed(28); rGH(1e3L, h = .2) |>
 #| fig-width: 8
 #| fig-align: left
 #| fig-cap: 'Tukey h-model: choices of A'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey h-model: choices of A'
 set.seed(28); rGH(1e3L, h = .2) |>
   letterValue_h(A_select = 'demo')
 ```
@@ -284,7 +285,8 @@ set.seed(43); rGH(1e3L, g = .3) |>
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey g-model: choices of A'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey g-model: choices of A'
 #| label: fig-g43-A
 set.seed(43); rGH(1e3L, g = .3) |>
   letterValue_g(A_select = 'demo')
@@ -295,7 +297,8 @@ set.seed(43); rGH(1e3L, g = .3) |>
 #| fig-width: 9
 #| fig-align: left
 #| fig-cap: 'Tukey g-model: choices of g'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey g-model: choices of g'
 #| label: fig-g43
 set.seed(43); rGH(1e3L, g = .3) |>
   letterValue_g(g_select = 'demo')
@@ -346,7 +349,8 @@ This is a 'perfect' data set that
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey gh-model (Perfect): choices of A'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey gh-model (Perfect): choices of A'
 set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |> 
   letterValue_gh(A_select = 'demo')
 ```
@@ -357,7 +361,8 @@ set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |>
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey gh-model (Perfect): choices of g'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey gh-model (Perfect): choices of g'
 set.seed(54); rGH(n = 1e3L, g = -.3, h = .1) |> 
   letterValue_gh(g_select = 'demo')
 ```
@@ -391,7 +396,8 @@ set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey gh-model (Salvageable): choices of g'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey gh-model (Salvageable): choices of g'
 set.seed(335); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(g_select = 'demo')
 ```
@@ -414,7 +420,8 @@ This is a 'hopeless' data set that
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey gh-model (Hopeless): choices of A'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey gh-model (Hopeless): choices of A'
 set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(A_select = 'demo')
 ```
@@ -425,7 +432,8 @@ set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
 #| fig-width: 6
 #| fig-align: left
 #| fig-cap: 'Tukey gh-model (Hopeless): choices of g'
-#| echo: false
+#| code-fold: true
+#| code-summary: '[R] Tukey gh-model (Hopeless): choices of g'
 set.seed(39); rGH(n = 1e3L, g = -.3, h = .1) |>
   letterValue_gh(g_select = 'demo')
 ```
