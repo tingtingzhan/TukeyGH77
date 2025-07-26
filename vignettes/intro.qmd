@@ -30,6 +30,14 @@ This vignette of package **`TukeyGH77`** ([CRAN](https://CRAN.R-project.org/pack
 -   @Tukey77's $g$-&-$h$ distribution density, cumulative probability, quantile, and random generator
 -   an improvement to @Hoaglin85's letter-value based estimates.
 
+R terminology might be different from that of mathematics and statistics. Please refer to Appendix @sec-terms for explanation and reference of the terms and abbreviations used in this vignette.
+
+Package **`TukeyGH77`** `Imports` packages
+
+-   **`ggplot2`** [@ggplot2, version `r packageVersion('ggplot2')`], **`geomtextpath`** [@geomtextpath, version `r packageVersion('geomtextpath')`], **`latex2exp`** [@latex2exp, version `r packageVersion('latex2exp')`], **`patchwork`** [@patchwork, version `r packageVersion('patchwork')`], **`rlang`** [@rlang, version `r packageVersion('rlang')`], **`scales`** [@scales, version `r packageVersion('scales')`],  for visualization
+-   `r knitr::asis_output('\U1f5dd')` **`rstpm2`** [@rstpm2, version `r packageVersion('rstpm2')`], key dependency, for function `rstpm2::vuniroot()`
+
+
 ## Prerequisite
 
 New features are first implemented on [Github](https://github.com/tingtingzhan/TukeyGH77).
@@ -442,7 +450,7 @@ Good new is that we do not see 'hopeless' data sets often in simulations ($\appr
 
 # Appendix 
 
-## Terms and Abbreviations
+## Terms & Abbreviations {#sec-terms}
 
 | Term / Abbreviation | Description |
 |------------------------------------|------------------------------------|
