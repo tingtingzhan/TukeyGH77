@@ -57,7 +57,9 @@ gh2z <- function(q, g = 0, h = 0, ...) {
   out <- q
   
   int <- c(-8.3, 8.3)
-  # identical(pnorm(8.3), 1) |> stopifnot() # even 8.29 does not work!
+  # stopifnot(identical(pnorm(8.3), 1)) # even 8.29 does not work!
+  # HOWEVER!!
+  # stopifnot(!identical(pnorm(-10), 0))
   
   if (!g0 && h0) { 
     # has boundary!! 
