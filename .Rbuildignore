@@ -4,3 +4,5 @@ Icon\\?
 vignettes/rsconnect
 vignettes/.*_files
 vignettes/.*.html
+^\.positai$
+^\.claude$
